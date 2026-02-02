@@ -63,6 +63,10 @@ export async function adminUploadDocumentAction(
   if (!userId) {
     redirect(withAppBasePath('/login'));
   }
+  const userId = session?.user?.id;
+  if (!userId) {
+    redirect(withAppBasePath('/login'));
+  }
 
   const employeeIdRaw = formData.get('employeeId');
   const employeeId = Number.parseInt(String(employeeIdRaw ?? ''), 10);
