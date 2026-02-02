@@ -185,7 +185,7 @@ async function createEntry(
     const effectivePause = effectiveCode === 'FT' || normalizedCode === 'U' ? 'Keine' : pause;
     const effectiveMittag = effectiveCode === 'FT' || normalizedCode === 'U' ? 'Nein' : mittag;
 
-    const planInfo = getPlanHoursForDay(employeeId, isoDate);
+    const planInfo = await getPlanHoursForDay(employeeId, isoDate);
     const validation = validateTimeEntry({
       kommt1: effectiveKommt1,
       geht1: effectiveGeht1,

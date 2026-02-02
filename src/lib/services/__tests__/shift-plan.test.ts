@@ -4,8 +4,8 @@ describe('getPlanHoursForDayFromPlan', () => {
   const samplePlan: ShiftPlan = {
     employeeId: 1,
     days: {
-      '2025-01-06': { start: '08:00', end: '16:00', requiredPauseMinutes: 0 },
-      '2025-01-07': { start: '08:30', end: '16:30', requiredPauseMinutes: 30 },
+      '2025-01-06': { start: '08:00', end: '16:00', requiredPauseMinutes: 0, label: null },
+      '2025-01-07': { start: '08:30', end: '16:30', requiredPauseMinutes: 30, label: null },
     },
   };
 

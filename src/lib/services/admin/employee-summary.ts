@@ -376,7 +376,7 @@ export async function getMonthlyAdminSummary(
 
   const planSollMap = new Map<string, number>();
   for (const isoDate of enumerateIsoRange(startIso, endIso)) {
-    const info = getPlanHoursForDayFromPlan(plan, isoDate) ?? getPlanHoursForDay(employeeId, isoDate);
+    const info = getPlanHoursForDayFromPlan(plan, isoDate) ?? await getPlanHoursForDay(employeeId, isoDate);
     const soll = info?.sollHours ?? 0;
     if (soll > 0) {
       planSollMap.set(isoDate, soll);

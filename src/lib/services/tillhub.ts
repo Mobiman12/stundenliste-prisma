@@ -182,7 +182,7 @@ function extractStaffGross(entry: unknown, staffId: string): number | null {
   const matches = candidates.some((value) => String(value).trim().toLowerCase() === normalizedStaff);
   if (!matches) return null;
 
-  const numeric = findFirstNumber(entry, [
+  const numeric = findFirstNumber(obj, [
     'amount_gross_total',
     'brutto',
     'gross',

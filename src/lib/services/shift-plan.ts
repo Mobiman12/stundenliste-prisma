@@ -269,12 +269,12 @@ export async function getShiftPlan(employeeId: number, options?: { from?: string
   };
 }
 
-export function getPlanHoursForDay(
+export async function getPlanHoursForDay(
   employeeId: number,
   isoDate: string,
   schicht: string | null | undefined = null
-): PlanHoursInfo | null {
-  const record = getShiftPlanDayRecord(employeeId, isoDate);
+): Promise<PlanHoursInfo | null> {
+  const record = await getShiftPlanDayRecord(employeeId, isoDate);
   if (record) {
     return buildPlanHours(
       sanitizeTime(record.start_time),
@@ -426,7 +426,7 @@ export async function saveShiftPlanDaySegments(
   const normalizedSegments = segments
     .map((segment, index) => {
       const labelRaw = segment.label?.trim() ?? '';
-      const mode = segment.mode === 'unavailable' ? 'unavailable' : 'available';
+      const mode: 'available' | 'unavailable' = segment.mode === 'unavailable' ? 'unavailable' : 'available';
       const noWorkDay = mode === 'unavailable' && isNoWorkLabel(labelRaw);
       const start = noWorkDay ? null : sanitizeTime(segment.start ?? null);
       const end = noWorkDay ? null : sanitizeTime(segment.end ?? null);
@@ -436,8 +436,8 @@ export async function saveShiftPlanDaySegments(
       const label = labelRaw.length ? labelRaw : null;
 
       let branchId: number | null = null;
-      if (segment.branchId !== undefined && segment.branchId !== null && segment.branchId !== '') {
-        const parsed = typeof segment.branchId === 'string' ? Number(segment.branchId) : Number(segment.branchId);
+      if (segment.branchId !== undefined && segment.branchId !== null) {
+        const parsed = Number(segment.branchId);
         if (Number.isFinite(parsed) && parsed > 0) {
           if (availableBranches.some((branch) => branch.id === Number(parsed))) {
             branchId = Number(parsed);
@@ -511,7 +511,7 @@ export async function saveShiftPlanDay(
     segmentIndex?: number | null;
     mode?: 'available' | 'unavailable' | null;
   }
-): void {
+): Promise<void> {
   await saveShiftPlanDaySegments(tenantId, employeeId, {
     isoDate: input.isoDate,
     segments: [

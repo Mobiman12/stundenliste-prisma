@@ -353,7 +353,7 @@ function ensureSchema(db: SqliteDatabase) {
     ensureEmployeeColumn('emergency_contact_relation', 'emergency_contact_relation TEXT');
 
     const employeePins = db
-      .prepare<{ id: number; booking_pin: string | null }>('SELECT id, booking_pin FROM employees ORDER BY id')
+      .prepare<[], { id: number; booking_pin: string | null }>('SELECT id, booking_pin FROM employees ORDER BY id')
       .all() as { id: number; booking_pin: string | null }[];
     const usedPins = new Set<string>();
     let pinCounter = 0;

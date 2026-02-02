@@ -4,6 +4,22 @@ import type { BaseUser } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
 import { listBranchesForEmployee, listBranchesForEmployees, type BranchSummary } from '@/lib/data/branches';
 
+type EmployeeRecordRow = Pick<
+  PrismaEmployee,
+  | 'id'
+  | 'firstName'
+  | 'lastName'
+  | 'email'
+  | 'phone'
+  | 'username'
+  | 'Rolle'
+  | 'personnelNumber'
+  | 'entryDate'
+  | 'arbeitsstundenProWoche'
+  | 'vacationDaysTotal'
+  | 'showInCalendar'
+>;
+
 export interface EmployeeRecord {
   id: number;
   first_name: string;
@@ -428,7 +444,7 @@ export function mapBaseUser(employee: EmployeeRecord): BaseUser {
   };
 }
 
-function mapEmployeeRecord(row: PrismaEmployee): EmployeeRecord {
+function mapEmployeeRecord(row: EmployeeRecordRow): EmployeeRecord {
   return {
     id: row.id,
     first_name: row.firstName,
@@ -490,10 +506,10 @@ export async function updateEmployeeAdminDetails(
     phone: emptyToNull(input.phone)?.trim() ?? null,
     email: emptyToNull(input.email)?.trim() ?? null,
     bookingPin: normalizedPin,
-    arbeitsstundenProWoche: emptyToNull(input.weekly_hours),
-    kinderfreibetrag: emptyToNull(input.kinderfreibetrag),
+    arbeitsstundenProWoche: emptyToNull(input.weekly_hours) ?? undefined,
+    kinderfreibetrag: emptyToNull(input.kinderfreibetrag) ?? undefined,
     taxClass: emptyToNull(input.tax_class)?.trim() ?? null,
-    hourlyWage: emptyToNull(input.hourly_wage),
+    hourlyWage: emptyToNull(input.hourly_wage) ?? undefined,
     iban: emptyToNull(input.iban)?.trim() ?? null,
     bic: emptyToNull(input.bic)?.trim() ?? null,
     steuerId: emptyToNull(input.steuer_id)?.trim() ?? null,
@@ -734,8 +750,8 @@ export async function updateEmployeeSettings(
   const updated = await prisma.employee.updateMany({
     where: { id: input.employeeId, tenantId },
     data: {
-      maxMinusstunden: input.maxMinusHours,
-      maxUeberstunden: input.maxOvertimeHours,
+      maxMinusstunden: input.maxMinusHours ?? undefined,
+      maxUeberstunden: input.maxOvertimeHours ?? undefined,
       sachbezuege: input.sachbezuege,
       sachbezuegeAmount: input.sachbezuegeAmount,
       mindJahresumsatz: input.mindJahresumsatz,

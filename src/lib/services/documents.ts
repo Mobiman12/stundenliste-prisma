@@ -94,6 +94,10 @@ export type DocumentSummary = {
 const MAIL_LOG_SUFFIX = '.mail.json';
 const PORTAL_HINT = process.env.APP_BASE_URL?.trim();
 
+function toIsoString(date: Date): string {
+  return DateTime.fromJSDate(date).toISO() ?? date.toISOString();
+}
+
 function getUploadRoot(): string {
   const configured = process.env.UPLOAD_ROOT;
   const root = configured ? path.resolve(configured) : path.resolve(process.cwd(), '..', 'uploads');
@@ -274,7 +278,7 @@ export function listEmployeeDocuments(employeeId: number): DocumentInfo[] {
         fileName,
         originalName: extractOriginalName(fileName),
         size: stats.size,
-        uploadedAt: DateTime.fromJSDate(stats.mtime).toISO(),
+        uploadedAt: toIsoString(stats.mtime),
         extension,
         documentType: detectDocumentType(fileName),
         uploadedBy: detectUploadedBy(fileName),
@@ -320,7 +324,7 @@ export async function saveEmployeeDocumentFromBuffer(
   return {
     storedFileName: storedName,
     size: stats.size,
-    uploadedAt: DateTime.fromJSDate(stats.mtime).toISO(),
+    uploadedAt: toIsoString(stats.mtime),
   };
 }
 
@@ -367,7 +371,7 @@ export function saveAdminDocumentFromBuffer(options: {
   return {
     storedFileName: storedName,
     size: stats.size,
-    uploadedAt: DateTime.fromJSDate(stats.mtime).toISO(),
+    uploadedAt: toIsoString(stats.mtime),
     fullPath,
     documentType: options.documentType,
   };

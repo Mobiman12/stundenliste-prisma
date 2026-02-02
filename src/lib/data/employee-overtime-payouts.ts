@@ -101,7 +101,7 @@ export function listEmployeeOvertimeHistory(
   const rows = db
     .prepare<
       [number, number],
-      { year: number; month: number; payout_hours: number | null }[]
+      { year: number; month: number; payout_hours: number | null }
     >(
       `SELECT year, month, payout_hours
        FROM employee_overtime_payouts

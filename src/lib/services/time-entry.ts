@@ -7,6 +7,7 @@ import {
   updateAdminChangeMeta,
   upsertDailyDay,
   type DailyDayRecord,
+  type DailyDaySummary,
   type UpsertDailyDayInput,
 } from '@/lib/data/daily-days';
 import {
@@ -14,7 +15,7 @@ import {
   updateEmployeeOvertimeBalance,
   getEmployeeValidationInfo,
 } from '@/lib/data/employees';
-import { recalculateOvertime } from '@/lib/services/overtime';
+import { recalculateOvertime, type DailyOvertimeInput } from '@/lib/services/overtime';
 import {
   deriveCodeFromPlanLabel,
   getPlanHoursForDay,
@@ -222,7 +223,7 @@ function buildAdminChangeSummary(
   return { type: 'update', summary: changes.join(', ') };
 }
 
-function mapRecordToOvertimeInput(record: DailyDayRecord) {
+function mapRecordToOvertimeInput(record: DailyDayRecord): DailyOvertimeInput {
   return {
     id: record.id,
     dayDate: record.day_date,
@@ -294,7 +295,7 @@ export async function recomputeEmployeeOvertime(tenantId: string, employeeId: nu
       continue;
     }
     const planInfo = getPlanHoursForDayFromPlan(shiftPlan, isoDate, planDay.label ?? '')
-      ?? getPlanHoursForDay(employeeId, isoDate, planDay.label ?? '');
+      ?? await getPlanHoursForDay(employeeId, isoDate, planDay.label ?? '');
     if (!planInfo || planInfo.sollHours <= 0.001) {
       continue;
     }
@@ -340,7 +341,7 @@ export async function saveTimeEntry(input: SaveTimeEntryInput): Promise<number> 
   const adminDisplayName = adminName && adminName.length ? adminName : 'Admin';
   const existingRecord = await getDailyDay(input.employeeId, input.dayDate);
 
-  const planInfo = getPlanHoursForDay(input.employeeId, input.dayDate, input.schicht ?? '');
+  const planInfo = await getPlanHoursForDay(input.employeeId, input.dayDate, input.schicht ?? '');
   const employeeInfo = await getEmployeeValidationInfo(tenantId, input.employeeId);
 
   let codeNormalized = (input.code ?? '').trim().toUpperCase();

@@ -236,7 +236,7 @@ function mapBranchRecord(branch: {
   email: string | null;
   metadata: string | null;
   createdAt: Date | string;
-  updatedAt: Date | string;
+  updatedAt: Date | string | null;
   branchSchedules?: Array<{ weekday: number; segmentIndex: number; startsAtMinutes: number | null; endsAtMinutes: number | null; isActive: number | boolean }>;
 }): BranchRecord {
   const parsedMetadata = parseMetadata(branch.metadata);
@@ -257,7 +257,13 @@ function mapBranchRecord(branch: {
     email: (branch.email ?? '').trim(),
     metadata: parsedMetadata,
     createdAt: branch.createdAt instanceof Date ? branch.createdAt.toISOString() : String(branch.createdAt),
-    updatedAt: branch.updatedAt instanceof Date ? branch.updatedAt.toISOString() : String(branch.updatedAt),
+    updatedAt: branch.updatedAt instanceof Date
+      ? branch.updatedAt.toISOString()
+      : branch.updatedAt
+      ? String(branch.updatedAt)
+      : branch.createdAt instanceof Date
+      ? branch.createdAt.toISOString()
+      : String(branch.createdAt),
     schedule: mapScheduleRows(branch.branchSchedules ?? []),
   };
 }

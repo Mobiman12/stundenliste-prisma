@@ -103,7 +103,7 @@ export function listEmployeeBonusHistory(
   const rows = db
     .prepare<
       [number, number],
-      { year: number; month: number; auszahlung: number | null; uebertrag: number | null }[]
+      { year: number; month: number; auszahlung: number | null; uebertrag: number | null }
     >(
       `SELECT year, month, auszahlung, uebertrag
        FROM employee_bonus
