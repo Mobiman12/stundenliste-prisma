@@ -123,7 +123,7 @@ export default function WeekPatternDrawer({
           return (parsed.getDay() + 6) % 7;
         })();
         const templateDay = fallbackTemplate?.days.find((entry) => entry.weekday === weekdayIndex);
-        let segments: DaySegmentState[] =
+        const segments: DaySegmentState[] =
           templateDay?.segments.map((segment) => {
             const mode = segment.mode === 'unavailable' ? 'unavailable' : 'available';
             const labelRaw = segment.label?.trim() ?? '';
@@ -403,7 +403,7 @@ export default function WeekPatternDrawer({
               </select>
               {templates.length === 0 ? (
                 <p className="mt-2 text-xs text-slate-400">
-                  Noch keine Vorlagen vorhanden. Du kannst im Bereich "Vorlagen verwalten" neue Muster anlegen.
+                  Noch keine Vorlagen vorhanden. Du kannst im Bereich &quot;Vorlagen verwalten&quot; neue Muster anlegen.
                 </p>
               ) : null}
             </div>

@@ -1,3 +1,5 @@
+import type { ShiftPlanDay } from '@prisma/client';
+
 import { getPrisma } from '@/lib/prisma';
 
 export type ShiftPlanDayRecord = {
@@ -43,7 +45,9 @@ const sanitizePause = (value: number | null | undefined): number => {
   return Math.max(0, Math.round(value));
 };
 
-function mapRecord(row: any): ShiftPlanDayRecord {
+type ShiftPlanDayRow = ShiftPlanDay & { branch?: { name: string } | null };
+
+function mapRecord(row: ShiftPlanDayRow): ShiftPlanDayRecord {
   return {
     id: row.id,
     employee_id: row.employeeId,

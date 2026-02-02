@@ -1,3 +1,5 @@
+import type { DailyDay } from '@prisma/client';
+
 import { getPrisma } from '@/lib/prisma';
 import { calculateIstHours as calculateIstHoursService } from '@/lib/services/time-calculations';
 
@@ -79,7 +81,7 @@ function toStringOrNull(value: unknown): string | null {
   return str.length ? str : null;
 }
 
-function mapRow(row: any): DailyDayRecord {
+function mapRow(row: DailyDay): DailyDayRecord {
   return {
     id: row.id,
     employee_id: row.employeeId,

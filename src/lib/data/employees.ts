@@ -1,3 +1,5 @@
+import type { Employee as PrismaEmployee, Prisma } from '@prisma/client';
+
 import type { BaseUser } from '@/lib/auth';
 import { getPrisma } from '@/lib/prisma';
 import { listBranchesForEmployee, listBranchesForEmployees, type BranchSummary } from '@/lib/data/branches';
@@ -426,7 +428,7 @@ export function mapBaseUser(employee: EmployeeRecord): BaseUser {
   };
 }
 
-function mapEmployeeRecord(row: any): EmployeeRecord {
+function mapEmployeeRecord(row: PrismaEmployee): EmployeeRecord {
   return {
     id: row.id,
     first_name: row.firstName,
@@ -476,7 +478,7 @@ export async function updateEmployeeAdminDetails(
     throw new Error('Mitarbeiter wurde nicht gefunden.');
   }
 
-  const data: any = {
+  const data: Prisma.EmployeeUpdateInput = {
     firstName: input.first_name.trim(),
     lastName: input.last_name.trim(),
     street: emptyToNull(input.street)?.trim() ?? null,

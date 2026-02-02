@@ -1,3 +1,5 @@
+import type { LeaveRequest } from '@prisma/client';
+
 import { getPrisma } from '@/lib/prisma';
 
 export type LeaveRequestType = 'vacation' | 'overtime';
@@ -42,7 +44,7 @@ export type UpdateLeaveRequestStatusInput = {
   decidedBy?: number | null;
 };
 
-function mapPrismaRow(row: any): LeaveRequestRow {
+function mapPrismaRow(row: LeaveRequest): LeaveRequestRow {
   return {
     id: row.id,
     employee_id: row.employeeId,
