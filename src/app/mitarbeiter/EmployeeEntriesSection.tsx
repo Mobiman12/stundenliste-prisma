@@ -875,9 +875,11 @@ export default function EmployeeEntriesSection({
     pauseOverrideRef.current = false;
     revenueOverrideRef.current = false;
     setFormValues((prev) => {
-      if ((prev.code ?? '').toUpperCase() !== 'Ü') {
+      const prevCode = (prev.code ?? '').toUpperCase();
+      if (prevCode !== 'Ü' && prevCode !== 'UH') {
         return prev;
       }
+      const isHalfOvertime = prevCode === 'UH';
       let changed = false;
       let next = prev;
       const ensureNext = () => {
@@ -1210,9 +1212,11 @@ export default function EmployeeEntriesSection({
       return;
     }
     setFormValues((prev) => {
-      if ((prev.code ?? '').toUpperCase() !== 'Ü') {
+      const prevCode = (prev.code ?? '').toUpperCase();
+      if (prevCode !== 'Ü' && prevCode !== 'UH') {
         return prev;
       }
+      const isHalfOvertime = prevCode === 'UH';
       const prevKommt2 = (prev.kommt2 ?? '').trim();
       const prevGeht2 = (prev.geht2 ?? '').trim();
       if (!prevKommt2 && !prevGeht2) {
@@ -1736,7 +1740,7 @@ export default function EmployeeEntriesSection({
   );
 
   useEffect(() => {
-    if (normalizedCode !== 'Ü') {
+    if (normalizedCode !== 'Ü' && normalizedCode !== 'UH') {
       mealOverrideRef.current = false;
       pauseOverrideRef.current = false;
       revenueOverrideRef.current = false;
@@ -1752,9 +1756,11 @@ export default function EmployeeEntriesSection({
     );
 
     setFormValues((prev) => {
-      if ((prev.code ?? '').toUpperCase() !== 'Ü') {
+      const prevCode = (prev.code ?? '').toUpperCase();
+      if (prevCode !== 'Ü' && prevCode !== 'UH') {
         return prev;
       }
+      const isHalfOvertime = prevCode === 'UH';
 
       let changed = false;
       let next = prev;
@@ -1767,8 +1773,8 @@ export default function EmployeeEntriesSection({
 
       if (!pauseOverrideRef.current) {
         const prevPauseMinutes = parsePauseToMinutes(prev.pause);
-        if (requiredPauseMinutes === 0 || normalizedCode === 'UH') {
-          if (!isNoPauseValue(prev.pause) || normalizedCode === 'UH') {
+        if (requiredPauseMinutes === 0 || isHalfOvertime) {
+          if (!isNoPauseValue(prev.pause) || isHalfOvertime) {
             ensureNext();
             next.pause = '0';
           }
@@ -1776,7 +1782,7 @@ export default function EmployeeEntriesSection({
           const shouldUpdatePause =
             prevPauseMinutes + 0.5 < requiredPauseMinutes ||
             prevPauseMinutes > requiredPauseMinutes + 0.5 ||
-            normalizedCode === 'UH';
+            isHalfOvertime;
           if (shouldUpdatePause) {
             ensureNext();
             next.pause = String(requiredPauseMinutes);
@@ -1785,7 +1791,7 @@ export default function EmployeeEntriesSection({
       }
 
       if (!mealOverrideRef.current) {
-        if (normalizedCode === 'UH') {
+        if (isHalfOvertime) {
           if ((prev.mittag ?? '') !== 'Nein') {
             ensureNext();
             next.mittag = 'Nein';
@@ -2397,12 +2403,10 @@ export default function EmployeeEntriesSection({
                 }
 
                 if (stepKey === 'time') {
-                  const showPauseControls =
-                    !(
-                      normalizedCode === 'Ü' && overtimeMatchesPlan
-                    ) || normalizedCode === 'FT';
-                  const showMealControl =
-                    (requiresMealFlag && normalizedCode !== 'FT') || normalizedCode === 'FT';
+                  const isFullDay = normalizedCode === 'FT';
+                  const isOvertimeCode = normalizedCode === 'Ü';
+                  const showPauseControls = isFullDay || !(isOvertimeCode && overtimeMatchesPlan);
+                  const showMealControl = isFullDay || requiresMealFlag;
                   const timeGridCols = showSecondTimeBlock
                     ? showMealControl
                       ? 'sm:grid-cols-3 lg:grid-cols-6'
