@@ -423,7 +423,7 @@ export async function deleteBranch(tenantId: string, id: number): Promise<void> 
   const prisma = getPrisma();
   const existing = await prisma.branch.findFirst({ where: { id, tenantId }, select: { id: true } });
   if (!existing) throw new Error('Standort wurde nicht gefunden.');
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.shiftPlanDay.updateMany({ where: { branchId: id }, data: { branchId: null } });
     await tx.employeeBranch.deleteMany({ where: { branchId: id } });
     await tx.branchSchedule.deleteMany({ where: { branchId: id } });
