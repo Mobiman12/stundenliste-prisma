@@ -72,7 +72,7 @@ export async function POST(req: Request) {
   }
 
   const prisma = getPrisma();
-  const existing = await prisma.branch.findMany({
+  const existing: { id: number; slug: string | null; name: string | null }[] = await prisma.branch.findMany({
     where: { tenantId },
     select: { id: true, slug: true, name: true },
   });
