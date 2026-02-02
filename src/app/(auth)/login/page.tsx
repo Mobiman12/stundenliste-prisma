@@ -23,6 +23,7 @@ type LoginSearchParams = {
   redirect?: string | string[];
   loggedOut?: string | string[];
   force?: string | string[];
+  reset?: string | string[];
 };
 
 export default async function LoginPage({ searchParams }: { searchParams?: LoginSearchParams }) {
