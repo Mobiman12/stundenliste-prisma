@@ -59,6 +59,10 @@ export async function adminUploadDocumentAction(
 
   const session = await getServerAuthSession();
   const tenantId = ensureAdmin(session);
+  const userId = session?.user?.id;
+  if (!userId) {
+    redirect(withAppBasePath('/login'));
+  }
 
   const employeeIdRaw = formData.get('employeeId');
   const employeeId = Number.parseInt(String(employeeIdRaw ?? ''), 10);
@@ -207,9 +211,9 @@ export default async function AdminDokumentePage({
 
   const documents = selectedEmployeeId ? listEmployeeDocuments(selectedEmployeeId) : [];
   const documentTypes = getAdminDocumentTypes();
-  const overviewDocuments = await listUnseenEmployeeDocuments(tenantId, session.user.id);
+  const overviewDocuments = await listUnseenEmployeeDocuments(tenantId, userId);
 
-  await markAdminEmployeeDocumentsAsSeen(tenantId, session.user.id, overviewDocuments as AdminDocumentOverviewEntry[]);
+  await markAdminEmployeeDocumentsAsSeen(tenantId, userId, overviewDocuments as AdminDocumentOverviewEntry[]);
 
   return (
     <AdminDocumentsPanel
