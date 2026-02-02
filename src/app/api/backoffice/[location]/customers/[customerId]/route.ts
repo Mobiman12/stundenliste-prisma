@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 import { getPrisma } from "@/lib/prisma";
 import { supportsCustomerMemberships } from "@/lib/customer-memberships";
 
 const prisma = getPrisma();
+
+const isUniqueConstraintError = (error: unknown): error is { code: string } => {
+  return typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "P2002";
+};
 
 const CUSTOMER_SELECT = {
   id: true,
@@ -185,7 +188,7 @@ export async function PATCH(
       },
     });
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+    if (isUniqueConstraintError(error)) {
       return NextResponse.json({ error: "Ein Kunde mit diesen Daten existiert bereits." }, { status: 400 });
     }
     console.error("[customer:update] failed", error);
