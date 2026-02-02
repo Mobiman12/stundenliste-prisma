@@ -189,6 +189,14 @@ export async function middleware(request: NextRequest) {
         redirectUrl.search = '';
         return redirectWithCount(request, redirectUrl);
       }
+      if (!match.ok) {
+        const response = NextResponse.json(
+          { message: 'Tenant/App nicht freigeschaltet' },
+          { status: 403 },
+        );
+        resetRedirectCount(response);
+        return response;
+      }
       requestHeaders.set('x-tenant-id', match.tenantId);
       requestHeaders.set('x-app-type', match.app);
       requestHeaders.set('x-tenant-status', match.tenantStatus);
