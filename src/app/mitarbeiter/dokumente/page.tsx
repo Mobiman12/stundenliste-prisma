@@ -79,7 +79,7 @@ export default async function MitarbeiterDokumentePage() {
       documents={documents as DocumentInfo[]}
       uploadAction={uploadDocumentAction}
       initialUploadState={INITIAL_UPLOAD_STATE}
-      allowedExtensions={ALLOWED_DOCUMENT_EXTENSIONS as string[]}
+      allowedExtensions={ALLOWED_DOCUMENT_EXTENSIONS}
     />
   );
 }

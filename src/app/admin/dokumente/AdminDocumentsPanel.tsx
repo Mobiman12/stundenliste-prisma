@@ -29,7 +29,7 @@ type Props = {
   employees: EmployeeOption[];
   selectedEmployeeId: number | null;
   documents: DocumentInfo[];
-  allowedExtensions: string[];
+  allowedExtensions: readonly string[];
   documentTypes: AdminDocumentTypeOption[];
   overviewDocuments: AdminDocumentOverviewEntry[];
   uploadAction: typeof adminUploadDocumentAction;

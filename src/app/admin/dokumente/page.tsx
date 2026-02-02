@@ -224,7 +224,7 @@ export default async function AdminDokumentePage({
       employees={employees}
       selectedEmployeeId={selectedEmployeeId}
       documents={documents as DocumentInfo[]}
-      allowedExtensions={ALLOWED_DOCUMENT_EXTENSIONS as string[]}
+      allowedExtensions={ALLOWED_DOCUMENT_EXTENSIONS}
       documentTypes={documentTypes as AdminDocumentTypeOption[]}
       overviewDocuments={overviewDocuments as AdminDocumentOverviewEntry[]}
       uploadAction={adminUploadDocumentAction}

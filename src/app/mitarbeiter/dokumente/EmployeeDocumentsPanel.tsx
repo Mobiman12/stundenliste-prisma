@@ -12,7 +12,7 @@ type Props = {
   documents: DocumentInfo[];
   uploadAction: typeof uploadDocumentAction;
   initialUploadState: UploadState;
-  allowedExtensions: string[];
+  allowedExtensions: readonly string[];
 };
 
 function formatSize(bytes: number): string {
