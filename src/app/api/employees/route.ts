@@ -42,7 +42,7 @@ export async function GET(request: Request) {
     }
 
     const prisma = getPrisma();
-    const rows = await prisma.employee.findMany({
+    const rows: EmployeeRow[] = await prisma.employee.findMany({
       where: {
         tenantId,
         ...(includeInactive ? {} : { isActive: 1 }),
