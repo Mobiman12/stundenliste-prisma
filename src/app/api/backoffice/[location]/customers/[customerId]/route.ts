@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-import { getPrismaClient } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { supportsCustomerMemberships } from "@/lib/customer-memberships";
 
-const prisma = getPrismaClient();
+const prisma = getPrisma();
 
 const CUSTOMER_SELECT = {
   id: true,

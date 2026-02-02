@@ -14,7 +14,7 @@ export async function getServerAuthSession(): Promise<AuthSession | null> {
   try {
     const cookieStore = await cookies();
     const cookieValue = cookieStore.get(SESSION_COOKIE)?.value ?? null;
-    const session = verifyTeamSession(cookieValue);
+    const session = await verifyTeamSession(cookieValue);
     if (!session) {
       return null;
     }

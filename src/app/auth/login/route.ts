@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
 
   const tenantInfo = employee.tenantId ? await fetchTenantInfo(employee.tenantId) : null;
   const expiresMs = Date.now() + SESSION_TTL_MS;
-  const cookieValue = createTeamSessionToken({
+  const cookieValue = await createTeamSessionToken({
     username: employee.username,
     expiresAt: expiresMs,
     tenantId: employee.tenantId,

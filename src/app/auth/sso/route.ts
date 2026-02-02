@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
   }
 
   const expiresMs = Number(payload.exp);
-  const cookieValue = createTeamSessionToken({
+  const cookieValue = await createTeamSessionToken({
     username: profile.username,
     expiresAt: expiresMs,
     tenantId: payload.tenantId,

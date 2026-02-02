@@ -246,7 +246,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const cookieValue = request.cookies.get(SESSION_COOKIE)?.value ?? null;
-  const session = verifyTeamSession(cookieValue);
+  const session = await verifyTeamSession(cookieValue);
   const hasTenantContext = Boolean(session?.tenantId);
   const hasValidSession = Boolean(session && (!REQUIRE_TENANT_SESSION || hasTenantContext));
 

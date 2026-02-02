@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         }))?.tenantId ?? null;
 
   const expiresMs = Date.now() + 1000 * 60 * 60 * 24;
-  const cookieValue = createTeamSessionToken({
+  const cookieValue = await createTeamSessionToken({
     username: profile.username,
     expiresAt: expiresMs,
     tenantId,
