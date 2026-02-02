@@ -219,7 +219,7 @@ function extractTillhubGross(entry: unknown, staffId: string): number | null {
   const matches = candidates.some((value) => String(value).trim().toLowerCase() === normalizedStaff);
   if (!matches) return null;
 
-  return findFirstNumber(entry, [
+  return findFirstNumber(obj, [
     'amount_gross_total',
     'brutto',
     'gross',
