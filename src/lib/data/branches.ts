@@ -433,7 +433,14 @@ export async function deleteBranch(tenantId: string, id: number): Promise<void> 
 
 export async function listBranchesForEmployee(tenantId: string, employeeId: number): Promise<BranchSummary[]> {
   const prisma = getPrisma();
-  const rows = await prisma.employeeBranch.findMany({
+  const rows: Array<{
+    branch: {
+      id: number;
+      name: string;
+      country: string | null;
+      metadata: string | null;
+    };
+  }> = await prisma.employeeBranch.findMany({
     where: { employeeId, branch: { tenantId } },
     include: { branch: { select: { id: true, name: true, country: true, metadata: true } } },
     orderBy: { branch: { name: 'asc' } },
