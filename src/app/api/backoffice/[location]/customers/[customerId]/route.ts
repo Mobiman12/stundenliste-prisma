@@ -15,7 +15,7 @@ const CUSTOMER_SELECT = {
   phone: true,
   categoryId: true,
   createdAt: true,
-} satisfies Prisma.CustomerSelect;
+} as const;
 
 async function resolveLocation(locationSlug: string) {
   return prisma.location.findUnique({
@@ -36,7 +36,7 @@ export async function GET(
   }
 
   const membershipSupported = await supportsCustomerMemberships(prisma);
-  const scope: Prisma.CustomerWhereInput = membershipSupported
+  const scope = membershipSupported
     ? {
         id: customerId,
         OR: [
@@ -101,7 +101,7 @@ export async function PATCH(
   }
 
   const membershipSupported = await supportsCustomerMemberships(prisma);
-  const scope: Prisma.CustomerWhereInput = membershipSupported
+  const scope = membershipSupported
     ? {
         id: customerId,
         OR: [

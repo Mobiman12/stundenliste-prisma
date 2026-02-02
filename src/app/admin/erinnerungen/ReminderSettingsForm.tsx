@@ -4,7 +4,8 @@ import { useActionState, useEffect, useMemo, useRef, useState, useTransition } f
 import { useFormStatus } from 'react-dom';
 import { DateTime } from 'luxon';
 
-import type { ReminderFormState, ReminderTestState, saveReminderAction, sendTestReminderAction } from './page';
+import type { ReminderFormState, ReminderTestState } from './types';
+import type { saveReminderAction, sendTestReminderAction } from './actions';
 import type { ReminderLogEntry } from '@/lib/data/reminders';
 
 function computeNextRun(sendHour: number, timezone: string, locale = 'de-DE'): string {

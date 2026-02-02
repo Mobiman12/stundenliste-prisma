@@ -88,7 +88,7 @@ function parseLocationForm(
   return { data };
 }
 
-export async function createLocationAction(
+async function createLocationAction(
   prevState: LocationActionState,
   formData: FormData
 ): Promise<LocationActionState> {
@@ -117,7 +117,7 @@ export async function createLocationAction(
   }
 }
 
-export async function updateLocationAction(formData: FormData): Promise<LocationActionState> {
+async function updateLocationAction(formData: FormData): Promise<LocationActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
 
@@ -149,7 +149,7 @@ export async function updateLocationAction(formData: FormData): Promise<Location
   }
 }
 
-export async function deleteLocationAction(formData: FormData): Promise<LocationActionState> {
+async function deleteLocationAction(formData: FormData): Promise<LocationActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
 

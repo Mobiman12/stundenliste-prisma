@@ -9,7 +9,7 @@ function isMaintenanceError(error: unknown): boolean {
   );
 }
 
-export default function Error({
+export default function ErrorPage({
   error,
   reset,
 }: {

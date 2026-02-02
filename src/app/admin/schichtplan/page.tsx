@@ -33,7 +33,7 @@ async function ensureAdminSession() {
   return { session, tenantId };
 }
 
-export async function updateShiftPlanDayAction(formData: FormData): Promise<ActionResult> {
+async function updateShiftPlanDayAction(formData: FormData): Promise<ActionResult> {
   'use server';
 
   const { tenantId } = await ensureAdminSession();
@@ -130,7 +130,7 @@ const NO_WORK_LABEL_LOWER = NO_WORK_LABEL.toLowerCase();
 const isNoWorkLabel = (label: string | null | undefined): boolean =>
   (label ?? '').trim().toLowerCase() === NO_WORK_LABEL_LOWER;
 
-export async function clearShiftPlanWeekAction(formData: FormData): Promise<ActionResult> {
+async function clearShiftPlanWeekAction(formData: FormData): Promise<ActionResult> {
   'use server';
 
   const { tenantId } = await ensureAdminSession();
@@ -160,7 +160,7 @@ export async function clearShiftPlanWeekAction(formData: FormData): Promise<Acti
   }
 }
 
-export async function fillShiftPlanWeekAction(formData: FormData): Promise<ActionResult> {
+async function fillShiftPlanWeekAction(formData: FormData): Promise<ActionResult> {
   'use server';
 
   const { tenantId } = await ensureAdminSession();
@@ -320,7 +320,7 @@ type WeekPatternPayload = {
   }>;
 };
 
-export async function createWeekPatternAction(formData: FormData): Promise<ActionResult> {
+async function createWeekPatternAction(formData: FormData): Promise<ActionResult> {
   'use server';
 
   const { tenantId } = await ensureAdminSession();
@@ -389,7 +389,8 @@ export async function createWeekPatternAction(formData: FormData): Promise<Actio
         const normalizedSegments = combinedSegments
           .map((segment, index) => {
             const labelTrimmed = typeof segment.label === 'string' ? segment.label.trim() : '';
-            const mode = segment.mode === 'unavailable' ? 'unavailable' : 'available';
+            const mode: 'available' | 'unavailable' =
+              segment.mode === 'unavailable' ? 'unavailable' : 'available';
             const noWorkDay = mode === 'unavailable' && isNoWorkLabel(labelTrimmed);
             const startValue = !noWorkDay && typeof segment.start === 'string' ? segment.start.trim() : null;
             const endValue = !noWorkDay && typeof segment.end === 'string' ? segment.end.trim() : null;

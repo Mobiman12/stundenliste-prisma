@@ -17,7 +17,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   missing: 'Bitte eine E-Mail-Adresse angeben.',
 };
 
-export default async function ForgotPage({ searchParams }: { searchParams?: ForgotSearchParams }) {
+export default async function ForgotPage({
+  searchParams,
+}: {
+  searchParams?: Promise<ForgotSearchParams>;
+}) {
   const session = await getServerAuthSession();
   if (session) {
     if (session.user.roleId === 2) {
@@ -26,8 +30,13 @@ export default async function ForgotPage({ searchParams }: { searchParams?: Forg
     redirect(withAppBasePath('/mitarbeiter'));
   }
 
-  const sentParam = Array.isArray(searchParams?.sent) ? searchParams?.sent[0] : searchParams?.sent;
-  const errorKey = Array.isArray(searchParams?.error) ? searchParams?.error[0] : searchParams?.error;
+  const resolvedSearchParams = await searchParams;
+  const sentParam = Array.isArray(resolvedSearchParams?.sent)
+    ? resolvedSearchParams?.sent[0]
+    : resolvedSearchParams?.sent;
+  const errorKey = Array.isArray(resolvedSearchParams?.error)
+    ? resolvedSearchParams?.error[0]
+    : resolvedSearchParams?.error;
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] : null;
   const sentMessage = sentParam
     ? 'Wenn ein Konto mit dieser E-Mail existiert, wurde eine Nachricht mit dem Reset-Link gesendet.'

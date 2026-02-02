@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { DateTime } from 'luxon';
 
 import type { EmployeeNewsItem } from '@/lib/services/news';
-import type { markNewsReadAction, MarkState } from './page';
+import type { MarkState } from './page';
 
 type Props = {
   news: EmployeeNewsItem[];
-  markAsReadAction: typeof markNewsReadAction;
+  markAsReadAction: (formData: FormData) => Promise<MarkState>;
 };
 
 function formatTimestamp(value: string | null | undefined): string {

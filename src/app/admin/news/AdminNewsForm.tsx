@@ -5,12 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { DateTime } from 'luxon';
 
 import type { AdminNewsItem } from '@/lib/services/news';
-import type {
-  NewsFormState,
-  DeleteState,
-  createNewsAction,
-  deleteNewsAction,
-} from './page';
+import type { DeleteState, NewsFormState } from './page';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -27,9 +22,9 @@ function SubmitButton() {
 
 type AdminNewsFormProps = {
   news: AdminNewsItem[];
-  createAction: typeof createNewsAction;
+  createAction: (prevState: NewsFormState, formData: FormData) => Promise<NewsFormState>;
   createInitialState: NewsFormState;
-  deleteAction: typeof deleteNewsAction;
+  deleteAction: (formData: FormData) => Promise<DeleteState>;
 };
 
 function formatTimestamp(value: string): string {

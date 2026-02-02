@@ -26,7 +26,7 @@ function parseParam(value: string | undefined): number | undefined {
 export default async function MitarbeiterMonatsuebersichtPage({
   searchParams,
 }: {
-  searchParams?: SearchParams;
+  searchParams?: Promise<SearchParams>;
 }) {
   const session = await getServerAuthSession();
   if (!session?.user) {

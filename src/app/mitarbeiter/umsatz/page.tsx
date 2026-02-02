@@ -68,7 +68,7 @@ function monthLabel(month: number): string {
   return MONTH_NAMES[Math.max(0, Math.min(11, month - 1))] ?? '';
 }
 
-export default async function MitarbeiterUmsatzPage({ searchParams }: { searchParams?: SearchParams }) {
+export default async function MitarbeiterUmsatzPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   const session = await getServerAuthSession();
   if (!session?.user) {
     redirect(withAppBasePath('/login?mode=employee'));

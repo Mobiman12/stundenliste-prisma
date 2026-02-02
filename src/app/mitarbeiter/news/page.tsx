@@ -22,7 +22,7 @@ function ensureEmployee(session: Awaited<ReturnType<typeof getServerAuthSession>
   return session.user.employeeId;
 }
 
-export async function markNewsReadAction(formData: FormData): Promise<MarkState> {
+async function markNewsReadAction(formData: FormData): Promise<MarkState> {
   'use server';
 
   const session = await getServerAuthSession();

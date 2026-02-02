@@ -78,7 +78,7 @@ function formatAdminName(session: Awaited<ReturnType<typeof getServerAuthSession
   return session?.user?.username ?? 'Admin';
 }
 
-export async function closeEmployeeMonthAction(
+async function closeEmployeeMonthAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -112,7 +112,7 @@ export async function closeEmployeeMonthAction(
   return { status: 'success', message: 'Monat erfolgreich abgeschlossen.' };
 }
 
-export async function reopenEmployeeMonthAction(
+async function reopenEmployeeMonthAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -146,7 +146,7 @@ export async function reopenEmployeeMonthAction(
   return { status: 'success', message: 'Monat wieder geöffnet.' };
 }
 
-export async function closeAllMonthAction(
+async function closeAllMonthAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {

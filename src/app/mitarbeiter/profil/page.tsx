@@ -45,7 +45,7 @@ function normalizeBirthDate(raw: string | null): { value: string | null; error?:
   return { value: null, error: 'Bitte ein gültiges Geburtsdatum eingeben (TT.MM.JJJJ).' };
 }
 
-export async function updateProfileAction(prevState: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+async function updateProfileAction(prevState: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
   'use server';
   try {
     const { employeeId, tenantId } = await ensureEmployeeContext();
@@ -98,7 +98,7 @@ export async function updateProfileAction(prevState: ProfileActionState, formDat
   }
 }
 
-export async function updatePasswordAction(prevState: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+async function updatePasswordAction(prevState: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
   'use server';
   try {
     const { employeeId, tenantId } = await ensureEmployeeContext();
@@ -132,7 +132,7 @@ export async function updatePasswordAction(prevState: ProfileActionState, formDa
   }
 }
 
-export async function updateBookingPinAction(prevState: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+async function updateBookingPinAction(prevState: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
   'use server';
   try {
     const { employeeId, tenantId } = await ensureEmployeeContext();

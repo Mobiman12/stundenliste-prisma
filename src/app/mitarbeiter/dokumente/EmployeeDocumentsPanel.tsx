@@ -5,12 +5,12 @@ import { useFormStatus } from 'react-dom';
 import { DateTime } from 'luxon';
 
 import type { DocumentInfo } from '@/lib/services/documents';
-import type { UploadState, uploadDocumentAction } from './page';
+import type { UploadState } from './page';
 
 type Props = {
   employeeId: number;
   documents: DocumentInfo[];
-  uploadAction: typeof uploadDocumentAction;
+  uploadAction: (prevState: UploadState, formData: FormData) => Promise<UploadState>;
   initialUploadState: UploadState;
   allowedExtensions: readonly string[];
 };

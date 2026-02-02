@@ -34,7 +34,7 @@ function ensureEmployee(session: Awaited<ReturnType<typeof getServerAuthSession>
 
 const INITIAL_UPLOAD_STATE: UploadState = {};
 
-export async function uploadDocumentAction(
+async function uploadDocumentAction(
   prevState: UploadState,
   formData: FormData
 ): Promise<UploadState> {

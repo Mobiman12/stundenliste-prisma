@@ -19,7 +19,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   invalid: 'Der Reset-Link ist ungültig oder abgelaufen.',
 };
 
-export default async function ResetPage({ searchParams }: { searchParams?: ResetSearchParams }) {
+export default async function ResetPage({
+  searchParams,
+}: {
+  searchParams?: Promise<ResetSearchParams>;
+}) {
   const session = await getServerAuthSession();
   if (session) {
     if (session.user.roleId === 2) {
@@ -28,8 +32,13 @@ export default async function ResetPage({ searchParams }: { searchParams?: Reset
     redirect(withAppBasePath('/mitarbeiter'));
   }
 
-  const tokenParam = Array.isArray(searchParams?.token) ? searchParams?.token[0] : searchParams?.token;
-  const errorKey = Array.isArray(searchParams?.error) ? searchParams?.error[0] : searchParams?.error;
+  const resolvedSearchParams = await searchParams;
+  const tokenParam = Array.isArray(resolvedSearchParams?.token)
+    ? resolvedSearchParams?.token[0]
+    : resolvedSearchParams?.token;
+  const errorKey = Array.isArray(resolvedSearchParams?.error)
+    ? resolvedSearchParams?.error[0]
+    : resolvedSearchParams?.error;
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] : null;
 
   if (!tokenParam) {

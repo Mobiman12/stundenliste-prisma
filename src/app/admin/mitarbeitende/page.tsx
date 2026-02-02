@@ -45,7 +45,7 @@ function parseNumber(value: FormDataEntryValue | null): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-export async function createEmployeeAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function createEmployeeAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
 
@@ -115,7 +115,7 @@ export async function createEmployeeAction(prevState: ActionState, formData: For
   return { status: 'success', message: 'Mitarbeiter wurde angelegt.' };
 }
 
-export async function toggleEmployeeActiveAction(
+async function toggleEmployeeActiveAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {

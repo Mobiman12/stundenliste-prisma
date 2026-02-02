@@ -28,7 +28,7 @@ function ensureAdmin(session: Awaited<ReturnType<typeof getServerAuthSession>>) 
   }
 }
 
-export async function createNewsAction(
+async function createNewsAction(
   prevState: NewsFormState,
   formData: FormData
 ): Promise<NewsFormState> {
@@ -56,7 +56,7 @@ export async function createNewsAction(
   }
 }
 
-export async function deleteNewsAction(formData: FormData): Promise<DeleteState> {
+async function deleteNewsAction(formData: FormData): Promise<DeleteState> {
   'use server';
 
   const session = await getServerAuthSession();

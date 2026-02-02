@@ -297,7 +297,7 @@ function summarizeCodes(records: ParsedRecord[]): CodeStats[] {
     .sort((a, b) => b.days - a.days);
 }
 
-export default async function MitarbeiterStatistikPage({ searchParams }: { searchParams?: SearchParams }) {
+export default async function MitarbeiterStatistikPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   const session = await getServerAuthSession();
   if (!session?.user) {
     redirect(withAppBasePath('/login?mode=employee'));

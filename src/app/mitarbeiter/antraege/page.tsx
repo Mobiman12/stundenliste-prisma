@@ -26,7 +26,7 @@ async function ensureEmployeeSession() {
   return { employeeId: session.user.employeeId, tenantId };
 }
 
-export async function submitLeaveRequestAction(
+async function submitLeaveRequestAction(
   _prevState: LeaveRequestFormState,
   formData: FormData
 ): Promise<LeaveRequestFormState> {
@@ -94,7 +94,7 @@ export async function submitLeaveRequestAction(
   }
 }
 
-export async function manageLeaveRequestAction(
+async function manageLeaveRequestAction(
   _prevState: LeaveRequestFormState,
   formData: FormData
 ): Promise<LeaveRequestFormState> {

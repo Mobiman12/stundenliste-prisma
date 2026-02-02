@@ -31,6 +31,10 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => null);
     console.info("[provision] received", body);
     const mode = (body?.mode as Mode) || "MINIMAL";
+    const tenantId = typeof body?.tenantId === "string" ? body.tenantId.trim() : "";
+    if (!tenantId) {
+      return NextResponse.json({ error: "tenantId_missing" }, { status: 400 });
+    }
 
     const prisma = getPrisma();
     const isDemo = mode === "DEMO";
@@ -38,6 +42,7 @@ export async function POST(req: Request) {
 
     // Demo-Branch
     const demoBranchData = {
+      tenantId,
       name: "Demo Standort",
       slug: "demo",
       city: "Berlin",
@@ -53,6 +58,7 @@ export async function POST(req: Request) {
       metadata: JSON.stringify({ federalState: "DE-BE" }),
     };
     const minimalBranchData = {
+      tenantId,
       name: "Demo Standort",
       slug: "demo",
       city: "Berlin",
@@ -60,7 +66,7 @@ export async function POST(req: Request) {
       timezone: "Europe/Berlin",
     };
     const branch = await prisma.branch.upsert({
-      where: { slug: "demo" },
+      where: { tenantId_slug: { tenantId, slug: "demo" } },
       update: isDemo ? demoBranchData : {},
       create: isDemo ? demoBranchData : minimalBranchData,
     });
@@ -81,6 +87,7 @@ export async function POST(req: Request) {
 
     // Demo-Mitarbeiter
     const baseEmployeeData = {
+      tenantId,
       firstName: "Demo",
       lastName: "Mitarbeiter",
       entryDate: today,
@@ -144,12 +151,12 @@ export async function POST(req: Request) {
       emergencyContactRelation: "Partner/in",
     };
     const demoEmployee = await prisma.employee.upsert({
-      where: { personnelNumber: "demo-1" },
+      where: { tenantId_personnelNumber: { tenantId, personnelNumber: "demo-1" } },
       update: isDemo
         ? { ...baseEmployeeData, ...demoEmployeeDetails }
         : {
-            firstName: "Demo",
-            lastName: "Mitarbeiter",
+          firstName: "Demo",
+          lastName: "Mitarbeiter",
             showInCalendar: 1,
             bookingPin: "0000",
             Rolle: 2,

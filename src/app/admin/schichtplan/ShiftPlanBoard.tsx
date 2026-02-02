@@ -390,11 +390,13 @@ export default function ShiftPlanBoard({
     node.addEventListener('scroll', handleScroll, { passive: true });
 
     let resizeObserver: ResizeObserver | null = null;
-    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(updateWidth);
-      resizeObserver.observe(node);
-    } else if (typeof window !== 'undefined') {
-      window.addEventListener('resize', updateWidth);
+    if (typeof window !== 'undefined') {
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(updateWidth);
+        resizeObserver.observe(node);
+      } else {
+        window.addEventListener('resize', updateWidth);
+      }
     }
 
     return () => {

@@ -602,3 +602,77 @@ model EmployeeBranch {
 
   @@id([employeeId, branchId])
 }
+
+model Location {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customers          Customer[]
+  customerCategories CustomerCategory[]
+  appointments       Appointment[]
+  memberships        CustomerLocationMembership[]
+}
+
+model CustomerCategory {
+  id         String   @id @default(cuid())
+  locationId String
+  name       String
+  color      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  location  Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  customers Customer[]
+
+  @@index([locationId])
+}
+
+model Customer {
+  id         String   @id @default(cuid())
+  locationId String
+  firstName  String
+  lastName   String
+  email      String?
+  phone      String?
+  categoryId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  location     Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  category     CustomerCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  appointments Appointment[]
+  memberships  CustomerLocationMembership[]
+
+  @@index([locationId])
+  @@index([categoryId])
+}
+
+model Appointment {
+  id         String   @id @default(cuid())
+  locationId String
+  customerId String
+  createdAt  DateTime @default(now())
+  startAt    DateTime?
+  endAt      DateTime?
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([locationId])
+  @@index([customerId])
+}
+
+model CustomerLocationMembership {
+  customerId String
+  locationId String
+  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, locationId])
+  @@index([locationId])
+}

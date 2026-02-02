@@ -12,12 +12,8 @@ import type {
   DocumentMailLog,
   DocumentTypeKey,
 } from '@/lib/services/documents';
-import type {
-  AdminUploadState,
-  AdminDeleteState,
-  adminUploadDocumentAction,
-  adminDeleteDocumentAction,
-} from './page';
+import type { AdminDeleteState, AdminUploadState } from './types';
+import type { adminDeleteDocumentAction, adminUploadDocumentAction } from './actions';
 
 type EmployeeOption = {
   id: number;

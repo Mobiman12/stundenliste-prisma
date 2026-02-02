@@ -26,7 +26,11 @@ type LoginSearchParams = {
   reset?: string | string[];
 };
 
-export default async function LoginPage({ searchParams }: { searchParams?: LoginSearchParams }) {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams?: Promise<LoginSearchParams>;
+}) {
   const session = await getServerAuthSession();
   if (session) {
     if (session.user.roleId === 2) {
@@ -35,18 +39,29 @@ export default async function LoginPage({ searchParams }: { searchParams?: Login
     redirect(withAppBasePath('/mitarbeiter'));
   }
 
-  const mode = Array.isArray(searchParams?.mode) ? searchParams?.mode[0] : searchParams?.mode;
-  const forceParam = Array.isArray(searchParams?.force) ? searchParams?.force[0] : searchParams?.force;
-  const loggedOutParam = Array.isArray(searchParams?.loggedOut) ? searchParams?.loggedOut[0] : searchParams?.loggedOut;
-  const resetParam = Array.isArray(searchParams?.reset) ? searchParams?.reset[0] : searchParams?.reset;
+  const resolvedSearchParams = await searchParams;
+  const mode = Array.isArray(resolvedSearchParams?.mode) ? resolvedSearchParams?.mode[0] : resolvedSearchParams?.mode;
+  const forceParam = Array.isArray(resolvedSearchParams?.force)
+    ? resolvedSearchParams?.force[0]
+    : resolvedSearchParams?.force;
+  const loggedOutParam = Array.isArray(resolvedSearchParams?.loggedOut)
+    ? resolvedSearchParams?.loggedOut[0]
+    : resolvedSearchParams?.loggedOut;
+  const resetParam = Array.isArray(resolvedSearchParams?.reset)
+    ? resolvedSearchParams?.reset[0]
+    : resolvedSearchParams?.reset;
   const forceLogin = Boolean((forceParam ?? '').trim() || (loggedOutParam ?? '').trim());
   if (mode === 'employee') {
-    const errorKey = Array.isArray(searchParams?.error) ? searchParams?.error[0] : searchParams?.error;
+    const errorKey = Array.isArray(resolvedSearchParams?.error)
+      ? resolvedSearchParams?.error[0]
+      : resolvedSearchParams?.error;
     const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] : null;
     const resetMessage =
       resetParam ? 'Dein Passwort wurde aktualisiert. Bitte melde dich neu an.' : null;
     const redirectTarget =
-      (Array.isArray(searchParams?.redirect) ? searchParams?.redirect[0] : searchParams?.redirect) ?? '/mitarbeiter';
+      (Array.isArray(resolvedSearchParams?.redirect)
+        ? resolvedSearchParams?.redirect[0]
+        : resolvedSearchParams?.redirect) ?? '/mitarbeiter';
 
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-12">

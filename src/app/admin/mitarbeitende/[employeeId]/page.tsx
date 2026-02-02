@@ -37,13 +37,15 @@ import { getPlanHoursForDay, getShiftPlan } from '@/lib/services/shift-plan';
 import { deleteTimeEntry, listTimeEntries, saveTimeEntry } from '@/lib/services/time-entry';
 import { validateTimeEntry } from '@/lib/services/time-entry-validation';
 import { isHolidayIsoDate, normalizeHolidayRegion } from '@/lib/services/holidays';
-import { FEDERAL_STATE_OPTIONS } from '@/lib/constants/federal-states';
+import { FEDERAL_STATE_OPTIONS, type GermanFederalStateCode } from '@/lib/constants/federal-states';
 
 import AdminEmployeeDetailClient, { type BonusSchemeType } from './AdminEmployeeDetailClient';
 import type { ActionState } from './types';
 import type { EntryActionState } from '@/app/mitarbeiter/types';
 
-const FEDERAL_STATE_CODES = new Set(FEDERAL_STATE_OPTIONS.map((option) => option.code));
+const FEDERAL_STATE_CODES = new Set<GermanFederalStateCode>(FEDERAL_STATE_OPTIONS.map((option) => option.code));
+const isFederalStateCode = (value: string): value is GermanFederalStateCode =>
+  FEDERAL_STATE_CODES.has(value as GermanFederalStateCode);
 
 function normalizeBirthDateValue(raw: string | null): { value: string | null; error?: string } {
   if (!raw) return { value: null };
@@ -259,7 +261,7 @@ function roundTwo(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-export async function createAdminTimeEntryAction(
+async function createAdminTimeEntryAction(
   _prevState: EntryActionState,
   formData: FormData | null
 ): Promise<EntryActionState> {
@@ -433,7 +435,7 @@ export async function createAdminTimeEntryAction(
   }
 }
 
-export async function deleteAdminTimeEntryAction(
+async function deleteAdminTimeEntryAction(
   _prevState: EntryActionState,
   formData: FormData | null
 ): Promise<EntryActionState> {
@@ -488,7 +490,7 @@ export async function deleteAdminTimeEntryAction(
   }
 }
 
-export async function updateProfileAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function updateProfileAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
   const employeeId = Number.parseInt(String(formData.get('employeeId') ?? ''), 10);
@@ -508,7 +510,7 @@ export async function updateProfileAction(prevState: ActionState, formData: Form
   const passwordRaw = parseString(formData.get('new_password'));
   const passwordHash = passwordRaw ? hashPassword(passwordRaw) : undefined;
   const federalStateRaw = parseString(formData.get('federal_state'));
-  const federalState = federalStateRaw && FEDERAL_STATE_CODES.has(federalStateRaw)
+  const federalState = federalStateRaw && isFederalStateCode(federalStateRaw)
     ? federalStateRaw
     : null;
   const bookingPinRaw = parseString(formData.get('booking_pin'));
@@ -601,7 +603,7 @@ export async function updateProfileAction(prevState: ActionState, formData: Form
   return { status: 'success', message: 'Profil aktualisiert.' };
 }
 
-export async function deleteEmployeeAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function deleteEmployeeAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
   const employeeId = Number.parseInt(String(formData.get('employeeId') ?? ''), 10);
@@ -618,7 +620,7 @@ export async function deleteEmployeeAction(prevState: ActionState, formData: For
   redirect(withAppBasePath('/admin/mitarbeitende'));
 }
 
-export async function updateSettingsAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function updateSettingsAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
   const employeeId = Number.parseInt(String(formData.get('employeeId') ?? ''), 10);
@@ -657,7 +659,7 @@ export async function updateSettingsAction(prevState: ActionState, formData: For
   return { status: 'success', message: 'Einstellungen gespeichert.' };
 }
 
-export async function updateBonusAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function updateBonusAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
   const employeeId = Number.parseInt(String(formData.get('employeeId') ?? ''), 10);
@@ -740,7 +742,7 @@ export async function updateBonusAction(prevState: ActionState, formData: FormDa
   return { status: 'success', message: 'Bonus-Konfiguration gespeichert.' };
 }
 
-export async function updateTillhubAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function updateTillhubAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   'use server';
   const { tenantId } = await ensureAdminSession();
   const employeeId = Number.parseInt(String(formData.get('employeeId') ?? ''), 10);
@@ -754,7 +756,7 @@ export async function updateTillhubAction(prevState: ActionState, formData: Form
   return { status: 'success', message: 'Tillhub-ID aktualisiert.' };
 }
 
-export async function updateMandatoryPauseScheduleAction(
+async function updateMandatoryPauseScheduleAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -825,7 +827,7 @@ export async function updateMandatoryPauseScheduleAction(
   return { status: 'success', message: 'Pflichtpausen gespeichert.' };
 }
 
-export async function saveSummaryPreferencesAction(
+async function saveSummaryPreferencesAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -869,7 +871,7 @@ export async function saveSummaryPreferencesAction(
   return { status: 'success', message: 'Ansicht gespeichert.' };
 }
 
-export async function updateBonusPayoutAction(
+async function updateBonusPayoutAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -907,7 +909,7 @@ export async function updateBonusPayoutAction(
   return { status: 'success', message: 'Bonus-Auszahlung gespeichert.' };
 }
 
-export async function updateOvertimePayoutAction(
+async function updateOvertimePayoutAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -957,7 +959,7 @@ function formatAdminName(session: Awaited<ReturnType<typeof getServerAuthSession
   return session?.user?.username ?? 'Admin';
 }
 
-export async function closeMonthlyClosingAction(
+async function closeMonthlyClosingAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -994,7 +996,7 @@ export async function closeMonthlyClosingAction(
   };
 }
 
-export async function reopenMonthlyClosingAction(
+async function reopenMonthlyClosingAction(
   prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {

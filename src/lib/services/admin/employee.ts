@@ -21,6 +21,16 @@ import {
   type UpdateEmployeeAdminInput,
   type CreateEmployeeInput,
 } from '@/lib/data/employees';
+
+export type {
+  BonusScheme,
+  BonusTier,
+  EmployeeAdminDetails,
+  EmployeeListItem,
+  EmployeeSettingsInput,
+  UpdateEmployeeAdminInput,
+  CreateEmployeeInput,
+};
 import { listEmployeeWeekdayPauses, replaceEmployeeWeekdayPauses } from '@/lib/data/employee-weekday-pauses';
 import { listDailyDayRecords, type DailyDayRecord } from '@/lib/data/daily-days';
 import { listMonthlyClosings } from '@/lib/data/monthly-closings';

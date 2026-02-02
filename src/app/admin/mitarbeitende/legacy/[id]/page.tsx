@@ -5,7 +5,7 @@ import { getEmployeeById } from '@/lib/data/employees';
 import { withAppBasePath } from '@/lib/routes';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function AdminEmployeeDetailPage({ params }: Props) {
@@ -18,7 +18,8 @@ export default async function AdminEmployeeDetailPage({ params }: Props) {
     redirect(withAppBasePath('/login'));
   }
 
-  const employeeId = Number(params.id);
+  const resolvedParams = await params;
+  const employeeId = Number(resolvedParams.id);
   if (!employeeId) {
     notFound();
   }

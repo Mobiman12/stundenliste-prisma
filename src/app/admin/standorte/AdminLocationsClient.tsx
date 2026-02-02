@@ -823,7 +823,7 @@ function LocationDetailPanel({
                 autoFederalStateRef.current = keepState ? autoFederalStateRef.current : inferredState || null;
                 return {
                   ...prev,
-                  country: nextCountry,
+                  country: normalizedNext,
                   federalState: nextFederalState,
                   timezone: nextTimezone,
                 };
@@ -1412,7 +1412,7 @@ export default function AdminLocationsClient({ locations, createAction, updateAc
                       autoCreateFederalStateRef.current = keepState ? autoCreateFederalStateRef.current : inferredState || null;
                       return {
                         ...prev,
-                        country: nextCountry,
+                        country: normalizedNext,
                         federalState: nextFederalState,
                         timezone: nextTimezone,
                       };
