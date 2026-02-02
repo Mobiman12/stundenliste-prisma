@@ -498,7 +498,7 @@ export async function replaceEmployeeBranches(
       throw new Error('Eine oder mehrere ausgewählte Standorte existieren nicht mehr.');
     }
   }
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.employeeBranch.deleteMany({ where: { employeeId } });
     if (uniqueIds.length) {
       await tx.employeeBranch.createMany({
