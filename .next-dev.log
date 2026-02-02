@@ -1,0 +1,21 @@
+
+> stundenliste-next@0.1.0 dev
+> next dev --turbopack --hostname 127.0.0.1 --port 3001
+
+   ▲ Next.js 15.5.4 (Turbopack)
+   - Local:        http://127.0.0.1:3001
+   - Network:      http://127.0.0.1:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Compiled middleware in 60ms
+ ✓ Ready in 721ms
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 1125ms
+ GET / 404 in 1308ms
+ ✓ Compiled /favicon.ico in 112ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 358ms
+ ✓ Compiled middleware in 3ms
+ ✓ Compiled middleware in 2ms
+ ✓ Compiled in 46ms
+ ✓ Compiled middleware in 1ms

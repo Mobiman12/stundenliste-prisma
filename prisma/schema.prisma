@@ -1,0 +1,604 @@
+// Prisma schema for stundenliste-prisma (aus dem bisherigen SQLite-Schema abgeleitet).
+// Hinweis: Viele Zeit-/Datumsfelder waren TEXT im Original; sie bleiben hier als String,
+// bis die Domänenlogik geklärt ist.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminDocumentSeen {
+  adminId  Int   @id
+  tenantId String
+  lastSeen Float @default(0)
+
+  @@index([tenantId])
+}
+
+model AdminSettings {
+  tenantId String
+  userId   String
+  jahr     Int
+  monat    Int
+  key      String
+  value    String
+
+  @@id([tenantId, userId, jahr, monat, key])
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  tenantId String
+  username String
+  password String
+
+  @@unique([tenantId, username])
+  @@index([tenantId])
+}
+
+model AppSettings {
+  tenantId String
+  key      String
+  value    String
+
+  @@id([tenantId, key])
+}
+
+model PasswordReset {
+  tenantId  String
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+}
+
+model ReminderSettings {
+  id              Int    @default(1)
+  tenantId        String
+  enabled         Int    @default(0)
+  sendHour        Int    @default(18)
+  subject         String @default("Erinnerung: Stundenliste vervollständigen")
+  contentTemplate String @default("")
+
+  @@id([tenantId, id])
+}
+
+model ReminderSendLog {
+  tenantId  String
+  periodKey String
+  sentCount Int
+  errorCount Int
+  sentAt     DateTime
+
+  @@id([tenantId, periodKey])
+}
+
+model Branch {
+  id           Int      @id @default(autoincrement())
+  tenantId     String
+  name         String
+  createdAt    DateTime @default(now())
+  street       String?
+  postalCode   String?
+  city         String?
+  openingHours String?
+  slug         String?  @db.Text
+  timezone     String   @default("Europe/Berlin")
+  addressLine1 String?
+  addressLine2 String?
+  country      String   @default("DE")
+  phone        String?
+  email        String?
+  metadata     String?
+  updatedAt    String?
+
+  shiftPlanDays    ShiftPlanDay[]
+  branchSchedules  BranchSchedule[]
+  employeeBranches EmployeeBranch[]
+
+  @@unique([tenantId, name])
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+}
+
+model BranchSchedule {
+  id              Int      @id @default(autoincrement())
+  branchId        Int
+  weekday         Int
+  segmentIndex    Int      @default(0)
+  startsAtMinutes Int?
+  endsAtMinutes   Int?
+  isActive        Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+
+  branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, weekday, segmentIndex])
+  @@index([branchId, weekday])
+}
+
+model Employee {
+  id                          Int      @id @default(autoincrement())
+  tenantId                    String
+  firstName                   String
+  lastName                    String
+  street                      String?
+  zipCode                     String?
+  city                        String?
+  birthDate                   String?
+  entryDate                   String
+  phone                       String?
+  email                       String?
+  personnelNumber             String
+  arbeitsstundenProWoche      Float    @default(40)
+  taxClass                    String?
+  hourlyWage                  Float    @default(0)
+  vacationDays                Int      @default(20)
+  vacationDaysLastYear        Int      @default(0)
+  Rolle                       Int
+  username                    String
+  password                    String
+  createdAt                   DateTime @default(now())
+  allowMinusHours             String   @default("Nein")
+  overtimeBalance             Float    @default(0)
+  sachbezuege                 String   @default("Nein")
+  sachbezuegeAmount           Float    @default(0)
+  mindJahresumsatz            Float    @default(0)
+  sachbezugVerpflegung        String   @default("Nein")
+  maxUeberstunden             Float    @default(0)
+  maxMinusstunden             Float    @default(0)
+  yearlySollHours             Float    @default(0)
+  importedOvertimeBalance     Float    @default(0)
+  importedMinusstundenBalance Float    @default(0)
+  importedVacationTaken       Float    @default(0)
+  importedBonusEarned         Float    @default(0)
+  importedPlusOvertime        Float    @default(0)
+  importedMinusOvertime       Float    @default(0)
+  monatlicherBonusProzent     Float    @default(0)
+  tillhubUserId               String?
+  tillhubAccountId            String?
+  minPauseUnder6Minutes       Int      @default(0)
+  isActive                    Int      @default(1)
+  federalState                String?
+  mandatoryPauseEnabled       Int      @default(0)
+  bookingPin                  String   @default("0000")
+  showInCalendar              Int      @default(1)
+  vacationDaysTotal           Int      @default(20)
+  kinderfreibetrag            Float    @default(0)
+  iban                        String?
+  bic                         String?
+  steuerId                    String?
+  socialSecurityNumber        String?
+  healthInsurance             String?
+  nationality                 String?
+  maritalStatus               String?
+  healthInsuranceNumber       String?
+  employmentType              String?
+  workTimeModel               String?
+  probationMonths             Int?
+  tarifGroup                  String?
+  emergencyContactName        String?
+  emergencyContactPhone       String?
+  emergencyContactRelation    String?
+
+  workHours               WorkHours[]
+  weeklyHoursHistory      WeeklyHoursHistory[]
+  hoursBank               HoursBank?
+  overtimeAccounts        OvertimeAccount[]
+  sickAccounts            SickAccount[]
+  holidayAccounts         HolidayAccount[]
+  shiftPlans              ShiftPlan[]
+  footerViewSetting       FooterViewSettings?
+  bonusMonat              BonusMonat[]
+  bonusAuszahlungen       BonusAuszahlung[]
+  employeeBonus           EmployeeBonus[]
+  monthlyClosings         MonthlyClosing[]
+  newsRead                NewsRead[]
+  employeeNewsRead        EmployeeNewsRead[]
+  dailyDays               DailyDay[]
+  bonusPayoutRequests     BonusPayoutRequest[]
+  bonusScheme             BonusScheme?
+  bonusTiers              BonusTier[]
+  shiftPlanDays           ShiftPlanDay[]
+  employeeWeekdayPauses   EmployeeWeekdayPause[]
+  employeeOvertimePayouts EmployeeOvertimePayout[]
+  leaveRequests           LeaveRequest[]
+  employeeBranches        EmployeeBranch[]
+
+  @@unique([tenantId, personnelNumber])
+  @@unique([tenantId, username])
+  @@unique([tenantId, bookingPin])
+  @@index([tenantId])
+}
+
+model WorkHours {
+  id         Int     @id @default(autoincrement())
+  employeeId Int
+  workDate   String
+  startTime  String
+  endTime    String
+  pauseTime  String?
+  notes      String?
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model WeeklyHoursHistory {
+  id          Int    @id @default(autoincrement())
+  employeeId  Int
+  changeDate  String
+  weeklyHours Float
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model HoursBank {
+  employeeId Int   @id
+  balance    Float @default(0)
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+model OvertimeAccount {
+  id               Int    @id @default(autoincrement())
+  employeeId       Int
+  dayDate          String
+  dailyDiff        Float  @default(0)
+  monthlyCarryover Float  @default(0)
+  finalBalance     Float  @default(0)
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+model SickAccount {
+  id               Int     @id @default(autoincrement())
+  employeeId       Int?
+  dayDate          String?
+  dailySickHours   Float?
+  totalSickBalance Float?
+
+  employee Employee? @relation(fields: [employeeId], references: [id])
+}
+
+model HolidayAccount {
+  id             Int     @id @default(autoincrement())
+  employeeId     Int?
+  dayDate        String?
+  holidayUsed    Float?
+  holidayBalance Float?
+
+  employee Employee? @relation(fields: [employeeId], references: [id])
+}
+
+model ShiftPlan {
+  id           Int    @id @default(autoincrement())
+  employeeId   Int
+  twoWeekCycle String @default("no")
+
+  // Week 1/2 start/end times stored as text
+  W1_mon_start String?
+  W1_mon_end   String?
+  W1_tue_start String?
+  W1_tue_end   String?
+  W1_wed_start String?
+  W1_wed_end   String?
+  W1_thu_start String?
+  W1_thu_end   String?
+  W1_fri_start String?
+  W1_fri_end   String?
+  W1_sat_start String?
+  W1_sat_end   String?
+  W1_sun_start String?
+  W1_sun_end   String?
+
+  W2_mon_start String?
+  W2_mon_end   String?
+  W2_tue_start String?
+  W2_tue_end   String?
+  W2_wed_start String?
+  W2_wed_end   String?
+  W2_thu_start String?
+  W2_thu_end   String?
+  W2_fri_start String?
+  W2_fri_end   String?
+  W2_sat_start String?
+  W2_sat_end   String?
+  W2_sun_start String?
+  W2_sun_end   String?
+
+  // Required pause minutes per weekday/segment
+  W1_mon_req_pause_min Int @default(0)
+  W1_tue_req_pause_min Int @default(0)
+  W1_wed_req_pause_min Int @default(0)
+  W1_thu_req_pause_min Int @default(0)
+  W1_fri_req_pause_min Int @default(0)
+  W1_sat_req_pause_min Int @default(0)
+  W1_sun_req_pause_min Int @default(0)
+  W2_mon_req_pause_min Int @default(0)
+  W2_tue_req_pause_min Int @default(0)
+  W2_wed_req_pause_min Int @default(0)
+  W2_thu_req_pause_min Int @default(0)
+  W2_fri_req_pause_min Int @default(0)
+  W2_sat_req_pause_min Int @default(0)
+  W2_sun_req_pause_min Int @default(0)
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+model FooterViewSettings {
+  userId      Int     @id
+  groupStates String?
+
+  user Employee @relation(fields: [userId], references: [id])
+}
+
+model BonusMonat {
+  userId          Int
+  jahr            Int
+  monat           Int
+  bonusAusbezahlt Float     @default(0)
+  bonusUebertrag  Float     @default(0)
+  employee        Employee? @relation(fields: [employeeId], references: [id])
+  employeeId      Int?
+
+  @@id([userId, jahr, monat])
+}
+
+model BonusAuszahlung {
+  employeeId      Int
+  jahr            Int
+  monat           Int
+  bonusAusgezahlt Float?
+  employee        Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([employeeId, jahr, monat])
+}
+
+model EmployeeBonus {
+  employeeId      Int
+  year            Int
+  month           Int
+  auszahlung      Float    @default(0)
+  uebertrag       Float    @default(0)
+  bonusAusgezahlt Float    @default(0)
+  employee        Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([employeeId, year, month])
+}
+
+model MonthlyClosing {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  year       Int
+  month      Int
+  closedAt   String?
+  closedBy   String?
+  status     String   @default("open")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, year, month])
+}
+
+model News {
+  id        Int      @id @default(autoincrement())
+  tenantId  String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  newsReads        NewsRead[]
+  employeeNewsRead EmployeeNewsRead[]
+
+  @@index([tenantId])
+}
+
+model NewsRead {
+  employeeId Int
+  newsId     Int
+  readAt     DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  news     News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@id([employeeId, newsId])
+}
+
+model EmployeeNewsRead {
+  employeeId Int
+  newsId     Int
+  readAt     DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  news     News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@id([employeeId, newsId])
+}
+
+model DailyDay {
+  id                         Int     @id @default(autoincrement())
+  employeeId                 Int
+  dayDate                    String
+  brutto                     Float   @default(0)
+  kommt1                     String?
+  geht1                      String?
+  kommt2                     String?
+  geht2                      String?
+  pause                      String?
+  code                       String?
+  bemerkungen                String?
+  mittag                     String?
+  schicht                    String? @default("")
+  sickHours                  Float   @default(0)
+  childSickHours             Float   @default(0)
+  shortWorkHours             Float   @default(0)
+  vacationHours              Float   @default(0)
+  overtimeDelta              Float   @default(0)
+  holidayHours               Float   @default(0)
+  planHours                  Float   @default(0)
+  forcedOverflow             Float   @default(0)
+  forcedOverflowReal         Float   @default(0)
+  requiredPauseUnder6Minutes Int     @default(0)
+  adminLastChangeAt          String?
+  adminLastChangeBy          String?
+  adminLastChangeType        String? @default("")
+  adminLastChangeSummary     String? @default("")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, dayDate])
+  @@index([employeeId, dayDate])
+}
+
+model BonusPayoutRequest {
+  id              Int      @id @default(autoincrement())
+  employeeId      Int
+  year            Int
+  month           Int
+  requestedAmount Float
+  note            String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+model BonusScheme {
+  employeeId    Int    @id
+  schemeType    String @default("linear")
+  linearPercent Float  @default(0)
+
+  employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  bonusTiers BonusTier[]
+}
+
+model BonusTier {
+  employeeId Int
+  threshold  Float
+  percent    Float
+
+  scheme   BonusScheme @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade, map: "fk_bonus_tier_scheme")
+  employee Employee    @relation(fields: [employeeId], references: [id])
+
+  @@id([employeeId, threshold])
+}
+
+model ShiftPlanDay {
+  id                   Int      @id @default(autoincrement())
+  employeeId           Int
+  dayDate              String
+  segmentIndex         Int      @default(0)
+  mode                 String   @default("available")
+  startTime            String?
+  endTime              String?
+  requiredPauseMinutes Int      @default(0)
+  label                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now())
+  branchId             Int?
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  branch   Branch?  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, dayDate, segmentIndex])
+  @@index([employeeId, dayDate])
+  @@index([employeeId, dayDate, segmentIndex])
+  @@index([branchId])
+}
+
+model ShiftPlanTemplate {
+  id        Int      @id @default(autoincrement())
+  tenantId  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  days ShiftPlanTemplateDay[]
+
+  @@index([tenantId])
+}
+
+model ShiftPlanTemplateDay {
+  id                   Int      @id @default(autoincrement())
+  templateId           Int
+  weekday              Int
+  segmentIndex         Int      @default(0)
+  mode                 String
+  startTime            String?
+  endTime              String?
+  requiredPauseMinutes Int      @default(0)
+  label                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now())
+
+  template ShiftPlanTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, weekday, segmentIndex])
+  @@index([templateId, weekday, segmentIndex])
+}
+
+model EmployeeWeekdayPause {
+  employeeId Int
+  weekday    Int
+  minutes    Int      @default(0)
+  updatedAt  DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@id([employeeId, weekday])
+}
+
+model EmployeeOvertimePayout {
+  employeeId  Int
+  year        Int
+  month       Int
+  payoutHours Float    @default(0)
+  employee    Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([employeeId, year, month])
+}
+
+model LeaveRequest {
+  id                      Int      @id @default(autoincrement())
+  employeeId              Int
+  type                    String
+  startDate               String
+  endDate                 String
+  reason                  String?
+  status                  String   @default("pending")
+  adminNote               String?
+  decidedBy               Int?
+  decidedAt               String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @default(now())
+  cancellationRequested   Int      @default(0)
+  cancellationRequestedAt String?
+  cancellationNote        String?
+  cancelledAt             String?
+  appliedToShiftPlan      Int      @default(0)
+  startTime               String?
+  endTime                 String?
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId, createdAt])
+  @@index([status, createdAt])
+}
+
+model EmployeeBranch {
+  employeeId Int
+  branchId   Int
+  createdAt  DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  branch   Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@id([employeeId, branchId])
+}
