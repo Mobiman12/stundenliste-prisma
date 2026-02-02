@@ -50,7 +50,8 @@ export default async function AdminLayout({
 
   const unseenDocuments = await countUnseenEmployeeDocuments(tenantId, session.user.id);
   const pendingRequests = await countPendingLeaveRequests(tenantId);
-  const host = headers().get('host');
+  const headersList = await headers();
+  const host = headersList.get('host');
   const tenantLabel = resolveTenantLabel(host);
   const sessionTenant =
     typeof session.raw.tenantName === 'string'
