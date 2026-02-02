@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { ensureAuthorized, UnauthorizedError } from '@/lib/api-auth';
 import { getEmployeeById } from '@/lib/data/employees';
@@ -68,16 +68,17 @@ function ensureAuth(request: Request): NextResponse | null {
 }
 
 export async function GET(
-  request: Request,
-  context: { params: { employeeId: string } }
+  request: NextRequest,
+  context: { params: Promise<{ employeeId: string }> }
 ) {
+  const { employeeId } = await context.params;
   const authResponse = ensureAuth(request);
   if (authResponse) {
     return authResponse;
   }
 
-  const employeeId = parseEmployeeId(context.params?.employeeId);
-  if (!employeeId) {
+  const employeeIdNumber = parseEmployeeId(employeeId);
+  if (!employeeIdNumber) {
     return NextResponse.json({ error: 'Ungültige Mitarbeiter-ID.' }, { status: 400 });
   }
 
@@ -86,7 +87,7 @@ export async function GET(
     return NextResponse.json({ error: 'Tenant fehlt.' }, { status: 400 });
   }
 
-  const employee = await getEmployeeById(tenantId, employeeId);
+  const employee = await getEmployeeById(tenantId, employeeIdNumber);
   if (!employee) {
     return NextResponse.json({ error: 'Mitarbeiter nicht gefunden.' }, { status: 404 });
   }
@@ -95,10 +96,10 @@ export async function GET(
   const month = searchParams.get('month') ?? undefined;
 
   try {
-    const plan = await getEditableShiftPlan(employeeId, month ?? undefined);
+    const plan = await getEditableShiftPlan(employeeIdNumber, month ?? undefined);
     return NextResponse.json({ data: plan });
   } catch (error) {
-    console.error('[api:shift-plan:get]', { employeeId, error });
+    console.error('[api:shift-plan:get]', { employeeId: employeeIdNumber, error });
     return NextResponse.json(
       { error: 'Schichtplan konnte nicht geladen werden.' },
       { status: 500 }
@@ -107,16 +108,17 @@ export async function GET(
 }
 
 export async function POST(
-  request: Request,
-  context: { params: { employeeId: string } }
+  request: NextRequest,
+  context: { params: Promise<{ employeeId: string }> }
 ) {
+  const { employeeId } = await context.params;
   const authResponse = ensureAuth(request);
   if (authResponse) {
     return authResponse;
   }
 
-  const employeeId = parseEmployeeId(context.params?.employeeId);
-  if (!employeeId) {
+  const employeeIdNumber = parseEmployeeId(employeeId);
+  if (!employeeIdNumber) {
     return NextResponse.json({ error: 'Ungültige Mitarbeiter-ID.' }, { status: 400 });
   }
 
@@ -125,7 +127,7 @@ export async function POST(
     return NextResponse.json({ error: 'Tenant fehlt.' }, { status: 400 });
   }
 
-  const employee = await getEmployeeById(tenantId, employeeId);
+  const employee = await getEmployeeById(tenantId, employeeIdNumber);
   if (!employee) {
     return NextResponse.json({ error: 'Mitarbeiter nicht gefunden.' }, { status: 404 });
   }
@@ -153,7 +155,7 @@ export async function POST(
   const days = daysRaw as RawShiftPlanDay[];
 
   try {
-    await saveShiftPlanMonth(employeeId, {
+    await saveShiftPlanMonth(employeeIdNumber, {
       monthKey,
       days: days.map((day) => ({
         isoDate: day.isoDate,
@@ -163,15 +165,15 @@ export async function POST(
       })),
     });
   } catch (error) {
-    console.error('[api:shift-plan:save]', { employeeId, error });
+    console.error('[api:shift-plan:save]', { employeeId: employeeIdNumber, error });
     return NextResponse.json({ error: 'Schichtplan konnte nicht gespeichert werden.' }, { status: 400 });
   }
 
   try {
-    const plan = await getEditableShiftPlan(employeeId, monthKey);
+    const plan = await getEditableShiftPlan(employeeIdNumber, monthKey);
     return NextResponse.json({ data: plan });
   } catch (error) {
-    console.error('[api:shift-plan:reload]', { employeeId, error });
+    console.error('[api:shift-plan:reload]', { employeeId: employeeIdNumber, error });
     return NextResponse.json(
       { error: 'Schichtplan wurde gespeichert, aber das Ergebnis konnte nicht geladen werden.' },
       { status: 500 }
