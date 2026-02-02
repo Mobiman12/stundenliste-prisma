@@ -1,4 +1,5 @@
 import { getPrisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { normalizeCountry, normalizeFederalState, type CountryCode } from '@/lib/region-options';
 
 const WEEKDAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'] as const;
@@ -388,7 +389,7 @@ export async function updateBranch(tenantId: string, id: number, input: BranchIn
   const sanitized = sanitizeBranchInput(input, existing);
   await ensureUniqueSlug(prisma, tenantId, sanitized.slug, id);
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.branchSchedule.deleteMany({ where: { branchId: id } });
     await tx.branch.update({
       where: { id },
