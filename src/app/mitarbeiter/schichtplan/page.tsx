@@ -53,14 +53,17 @@ function sanitizePayload(raw: TemplatePayload): TemplatePayload {
   return {
     name,
     days: days
-      .map((day) => ({
-        weekday: Number(day.weekday),
-        mode: day.mode === 'unavailable' ? 'unavailable' : 'available',
-        start: typeof day.start === 'string' ? day.start : null,
-        end: typeof day.end === 'string' ? day.end : null,
-        pause: Number(day.pause ?? 0) || 0,
-        label: typeof day.label === 'string' ? day.label : null,
-      }))
+      .map((day) => {
+        const mode: 'available' | 'unavailable' = day.mode === 'unavailable' ? 'unavailable' : 'available';
+        return {
+          weekday: Number(day.weekday),
+          mode,
+          start: typeof day.start === 'string' ? day.start : null,
+          end: typeof day.end === 'string' ? day.end : null,
+          pause: Number(day.pause ?? 0) || 0,
+          label: typeof day.label === 'string' ? day.label : null,
+        };
+      })
       .filter((day) => Number.isInteger(day.weekday) && day.weekday >= 0 && day.weekday <= 6),
   };
 }
