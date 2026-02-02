@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { hashPassword } from "@/lib/auth";
 import { getPrisma } from "@/lib/prisma";
 
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
   const today = new Date().toISOString().slice(0, 10);
   const incomingIds = new Set(staff.map((person) => person.id).filter(Boolean));
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     for (const person of staff) {
       if (!person?.id) continue;
       const personnelNumber = person.id;
