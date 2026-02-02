@@ -70,12 +70,6 @@ function startOfWeek(date: Date): Date {
   return clone;
 }
 
-function addDays(baseIso: string, delta: number): Date {
-  const date = toDate(baseIso);
-  date.setDate(date.getDate() + delta);
-  return date;
-}
-
 function toWeekdayIndex(iso: string): number {
   const date = new Date(`${iso}T00:00:00`);
   return (date.getDay() + 6) % 7;

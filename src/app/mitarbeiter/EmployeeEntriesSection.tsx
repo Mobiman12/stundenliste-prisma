@@ -879,7 +879,6 @@ export default function EmployeeEntriesSection({
       if (prevCode !== 'Ü' && prevCode !== 'UH') {
         return prev;
       }
-      const isHalfOvertime = prevCode === 'UH';
       let changed = false;
       let next = prev;
       const ensureNext = () => {
@@ -1216,7 +1215,6 @@ export default function EmployeeEntriesSection({
       if (prevCode !== 'Ü' && prevCode !== 'UH') {
         return prev;
       }
-      const isHalfOvertime = prevCode === 'UH';
       const prevKommt2 = (prev.kommt2 ?? '').trim();
       const prevGeht2 = (prev.geht2 ?? '').trim();
       if (!prevKommt2 && !prevGeht2) {

@@ -8,14 +8,14 @@ export async function supportsCustomerMemberships(prisma: PrismaClient): Promise
   }
 
   try {
-    const result = await prisma.$queryRaw<Array<{ exists: boolean }>>(Prisma.sql`
+    const result = await prisma.$queryRaw(Prisma.sql`
       SELECT EXISTS (
         SELECT 1
         FROM information_schema.tables
         WHERE table_schema = current_schema()
           AND table_name = 'CustomerLocationMembership'
       ) AS "exists"
-    `);
+    `) as Array<{ exists: boolean }>;
 
     const supported = Boolean(result?.[0]?.exists);
     membershipSupportCache.set(prisma, supported);
