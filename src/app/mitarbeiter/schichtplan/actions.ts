@@ -601,7 +601,8 @@ export async function createEmployeeWeekPatternAction(formData: FormData): Promi
       const normalizedSegments = combinedSegments
         .map((segment, index) => {
           const labelTrimmed = typeof segment.label === 'string' ? segment.label.trim() : '';
-          const mode = segment.mode === 'unavailable' ? 'unavailable' : 'available';
+          const mode: 'available' | 'unavailable' =
+            segment.mode === 'unavailable' ? 'unavailable' : 'available';
           const noWorkDay = mode === 'unavailable' && isNoWorkLabel(labelTrimmed);
           const startValue = !noWorkDay && typeof segment.start === 'string' ? segment.start.trim() : null;
           const endValue = !noWorkDay && typeof segment.end === 'string' ? segment.end.trim() : null;
