@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: Run deploy job after image build
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -27,6 +33,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -37,10 +44,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Published digest ${{ steps.build.outputs.digest }}
+        run: echo "${{ steps.build.outputs.digest }}"
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ secrets.SSH_HOST != '' }}
+    if: ${{ github.event_name == workflow_dispatch && github.event.inputs.deploy == true }}
     steps:
       - name: SSH deploy
         uses: appleboy/ssh-action@v1.0.0
