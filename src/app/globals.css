@@ -1,0 +1,327 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f1f5f9;
+  --app-border: #e2e8f0;
+  --app-text: #0f172a;
+  --app-text-muted: #64748b;
+  --app-accent: #10b981;
+  --app-accent-contrast: #ffffff;
+  --app-accent-soft: #d1fae5;
+  --app-accent-strong: #059669;
+
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+  --brand: var(--app-accent);
+}
+
+[data-theme="sky"] {
+  --app-accent: #0ea5e9;
+  --app-accent-soft: #e0f2fe;
+  --app-accent-strong: #0284c7;
+}
+
+[data-theme="amber"] {
+  --app-accent: #f59e0b;
+  --app-accent-soft: #fef3c7;
+  --app-accent-strong: #d97706;
+}
+
+[data-theme="rose"] {
+  --app-accent: #f43f5e;
+  --app-accent-soft: #ffe4e6;
+  --app-accent-strong: #e11d48;
+}
+
+[data-theme="violet"] {
+  --app-accent: #8b5cf6;
+  --app-accent-soft: #ede9fe;
+  --app-accent-strong: #7c3aed;
+}
+
+[data-theme="slate"] {
+  --app-accent: #334155;
+  --app-accent-soft: #e2e8f0;
+  --app-accent-strong: #1e293b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--app-accent-contrast);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --app-bg: #0b1220;
+    --app-surface: #0f172a;
+    --app-surface-muted: #111827;
+    --app-border: #1f2937;
+    --app-text: #e5e7eb;
+    --app-text-muted: #94a3b8;
+
+    --background: var(--app-bg);
+    --foreground: var(--app-text);
+  }
+
+  [data-theme="emerald"] {
+    --app-accent-soft: #064e3b;
+  }
+
+  [data-theme="sky"] {
+    --app-accent-soft: #0c4a6e;
+  }
+
+  [data-theme="amber"] {
+    --app-accent-soft: #78350f;
+  }
+
+  [data-theme="rose"] {
+    --app-accent-soft: #881337;
+  }
+
+  [data-theme="violet"] {
+    --app-accent-soft: #4c1d95;
+  }
+
+  [data-theme="slate"] {
+    --app-accent-soft: #1e293b;
+  }
+}
+
+[data-theme] .bg-brand,
+[data-theme] .bg-emerald-500,
+[data-theme] .bg-emerald-600,
+[data-theme] .bg-sky-500,
+[data-theme] .bg-sky-600,
+[data-theme] .bg-blue-600,
+[data-theme] .bg-blue-500 {
+  background-color: var(--app-accent) !important;
+}
+
+[data-theme] .text-brand,
+[data-theme] .text-emerald-700,
+[data-theme] .text-emerald-800,
+[data-theme] .text-sky-700,
+[data-theme] .text-sky-800,
+[data-theme] .text-blue-700,
+[data-theme] .text-blue-800 {
+  color: var(--app-accent) !important;
+}
+
+[data-theme] .bg-emerald-50,
+[data-theme] .bg-emerald-100,
+[data-theme] .bg-sky-50,
+[data-theme] .bg-sky-100,
+[data-theme] .bg-blue-50,
+[data-theme] .bg-blue-100 {
+  background-color: var(--app-accent-soft) !important;
+}
+
+[data-theme] .border-brand,
+[data-theme] .border-emerald-200,
+[data-theme] .border-emerald-300,
+[data-theme] .border-sky-200,
+[data-theme] .border-sky-300,
+[data-theme] .border-blue-200,
+[data-theme] .border-blue-300 {
+  border-color: var(--app-accent) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme] .bg-white {
+    background-color: var(--app-surface) !important;
+  }
+
+  [data-theme] .bg-white\/95,
+  [data-theme] .bg-white\/90,
+  [data-theme] .bg-white\/80,
+  [data-theme] .bg-white\/70,
+  [data-theme] .bg-white\/60 {
+    background-color: var(--app-surface) !important;
+  }
+
+  [data-theme] .bg-slate-50,
+  [data-theme] .bg-slate-100,
+  [data-theme] .bg-zinc-50,
+  [data-theme] .bg-zinc-100,
+  [data-theme] .bg-gray-50,
+  [data-theme] .bg-gray-100 {
+    background-color: var(--app-surface-muted) !important;
+  }
+
+  [data-theme] .bg-slate-50\/60,
+  [data-theme] .bg-slate-50\/70,
+  [data-theme] .bg-slate-100\/95,
+  [data-theme] .bg-slate-100\/90 {
+    background-color: var(--app-surface-muted) !important;
+  }
+
+  [data-theme] .hover\:bg-slate-50\/60:hover,
+  [data-theme] .hover\:bg-slate-50\/70:hover,
+  [data-theme] .hover\:bg-slate-100\/95:hover,
+  [data-theme] .hover\:bg-slate-100\/90:hover {
+    background-color: var(--app-surface-muted) !important;
+  }
+
+  [data-theme] .text-slate-900,
+  [data-theme] .text-slate-800,
+  [data-theme] .text-zinc-900,
+  [data-theme] .text-zinc-800,
+  [data-theme] .text-gray-900,
+  [data-theme] .text-gray-800 {
+    color: var(--app-text) !important;
+  }
+
+  [data-theme] .text-slate-700,
+  [data-theme] .text-slate-600,
+  [data-theme] .text-zinc-700,
+  [data-theme] .text-zinc-600,
+  [data-theme] .text-gray-700,
+  [data-theme] .text-gray-600 {
+    color: var(--app-text-muted) !important;
+  }
+
+  [data-theme] .text-slate-500,
+  [data-theme] .text-slate-400,
+  [data-theme] .text-zinc-500,
+  [data-theme] .text-zinc-400,
+  [data-theme] .text-gray-500,
+  [data-theme] .text-gray-400 {
+    color: var(--app-text-muted) !important;
+  }
+
+  [data-theme] .border-slate-200,
+  [data-theme] .border-slate-300,
+  [data-theme] .border-zinc-200,
+  [data-theme] .border-zinc-300,
+  [data-theme] .border-gray-200,
+  [data-theme] .border-gray-300 {
+    border-color: var(--app-border) !important;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+select,
+input,
+textarea {
+  color: var(--app-text);
+  font-family: inherit;
+}
+
+select,
+select option {
+  color: var(--app-text) !important;
+}
+
+select option {
+  background-color: var(--app-surface);
+}
+
+label > span:first-child {
+  color: var(--app-text);
+  font-weight: 600;
+}
+
+input[type="number"],
+input[type="time"],
+input[type="date"],
+input[type="email"],
+input[type="tel"],
+input[type="text"],
+textarea {
+  color: var(--app-text);
+  -webkit-text-fill-color: var(--app-text);
+}
+
+input::placeholder,
+textarea::placeholder,
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: var(--app-text-muted);
+  opacity: 1;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--app-text);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input[type="time"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field,
+input[type="time"]::-webkit-datetime-edit-second-field,
+input[type="time"]::-webkit-datetime-edit-ampm-field,
+input[type="time"]::-webkit-datetime-edit-text {
+  color: var(--app-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .backoffice-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  .backoffice-shell textarea,
+  .backoffice-shell select {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #d1d5db !important;
+    -webkit-text-fill-color: #0f172a !important;
+  }
+
+  .backoffice-shell select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .backoffice-shell input::placeholder,
+  .backoffice-shell textarea::placeholder {
+    color: #6b7280 !important;
+  }
+}
+
+[data-theme-mode="light"] {
+  color-scheme: light;
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f1f5f9;
+  --app-border: #e2e8f0;
+  --app-text: #0f172a;
+  --app-text-muted: #64748b;
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+}
+
+[data-theme-mode="light"][data-theme="emerald"] {
+  --app-accent-soft: #d1fae5;
+}
+
+[data-theme-mode="light"][data-theme="sky"] {
+  --app-accent-soft: #e0f2fe;
+}
+
+[data-theme-mode="light"][data-theme="amber"] {
+  --app-accent-soft: #fef3c7;
+}
+
+[data-theme-mode="light"][data-theme="rose"] {
+  --app-accent-soft: #ffe4e6;
+}
+
+[data-theme-mode="light"][data-theme="violet"] {
+  --app-accent-soft: #ede9fe;
+}
+
+[data-theme-mode="light"][data-theme="slate"] {
+  --app-accent-soft: #e2e8f0;
+}
