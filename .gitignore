@@ -52,3 +52,5 @@ __MACOSX/
 /database/
 __pycache__/
 *.pyc
+/Codex_Eingabe_Stundenliste_Next/
+/start_stundenliste_next.rtf
