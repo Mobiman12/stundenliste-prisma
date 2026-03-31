@@ -5,7 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { withAppBasePath } from '@/lib/routes';
 import type { ActionState } from '../mitarbeitende/[employeeId]/types';
-import type { MonthlyClosingOverviewRow } from './page';
+import type {
+  MonthlyClosingEmployeeStatusFilter,
+  MonthlyClosingOverviewRow,
+} from './page';
 
 type OverviewStats = {
   openCount: number;
@@ -18,6 +21,7 @@ type Props = {
   stats: OverviewStats;
   selectedYear: number;
   selectedMonth: number;
+  selectedEmployeeStatus: MonthlyClosingEmployeeStatusFilter;
   yearOptions: number[];
   monthOptions: number[];
   closeEmployeeAction: (
@@ -75,6 +79,7 @@ export default function MonatsabschlussClient({
   stats,
   selectedYear,
   selectedMonth,
+  selectedEmployeeStatus,
   yearOptions,
   monthOptions,
   closeEmployeeAction,
@@ -148,6 +153,23 @@ export default function MonatsabschlussClient({
     router.replace(`/admin/monatsabschluss?${params.toString()}`);
   };
 
+  const handleEmployeeStatusChange = (employeeStatus: MonthlyClosingEmployeeStatusFilter) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    if (employeeStatus === 'all') {
+      params.delete('employeeStatus');
+    } else {
+      params.set('employeeStatus', employeeStatus);
+    }
+    if (!params.has('year')) {
+      params.set('year', String(selectedYear));
+    }
+    if (!params.has('month')) {
+      params.set('month', padMonth(selectedMonth));
+    }
+    const query = params.toString();
+    router.replace(query ? `/admin/monatsabschluss?${query}` : '/admin/monatsabschluss');
+  };
+
   return (
     <section className="space-y-6">
       <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -197,6 +219,20 @@ export default function MonatsabschlussClient({
                   {padMonth(month)}
                 </option>
               ))}
+            </select>
+          </label>
+          <label className="flex items-center justify-between gap-2 sm:justify-start">
+            <span>Mitarbeiter</span>
+            <select
+              value={selectedEmployeeStatus}
+              onChange={(event) =>
+                handleEmployeeStatusChange(event.target.value as MonthlyClosingEmployeeStatusFilter)
+              }
+              className="rounded-md border border-slate-300 px-3 py-1"
+            >
+              <option value="all">Alle</option>
+              <option value="active">Aktive</option>
+              <option value="inactive">Inaktive</option>
             </select>
           </label>
         </div>

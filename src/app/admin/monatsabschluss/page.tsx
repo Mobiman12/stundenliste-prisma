@@ -18,7 +18,10 @@ import type { ActionState } from '../mitarbeitende/[employeeId]/types';
 type SearchParams = {
   year?: string;
   month?: string;
+  employeeStatus?: string;
 };
+
+export type MonthlyClosingEmployeeStatusFilter = 'all' | 'active' | 'inactive';
 
 export type MonthlyClosingOverviewRow = {
   employeeId: number;
@@ -68,6 +71,14 @@ function getSelectedYearMonth(searchParams?: SearchParams): { year: number; mont
   const month = preferredMonth && preferredMonth >= 1 && preferredMonth <= 12 ? preferredMonth : currentMonth;
 
   return { year, month };
+}
+
+function getSelectedEmployeeStatus(searchParams?: SearchParams): MonthlyClosingEmployeeStatusFilter {
+  const value = searchParams?.employeeStatus?.trim().toLowerCase();
+  if (value === 'active' || value === 'inactive') {
+    return value;
+  }
+  return 'all';
 }
 
 function formatAdminName(session: Awaited<ReturnType<typeof getServerAuthSession>>): string {
@@ -237,6 +248,19 @@ async function buildOverviewRows(
   return rows;
 }
 
+function filterOverviewRows(
+  rows: MonthlyClosingOverviewRow[],
+  employeeStatus: MonthlyClosingEmployeeStatusFilter
+): MonthlyClosingOverviewRow[] {
+  if (employeeStatus === 'active') {
+    return rows.filter((row) => row.isActive);
+  }
+  if (employeeStatus === 'inactive') {
+    return rows.filter((row) => !row.isActive);
+  }
+  return rows;
+}
+
 function computeStats(rows: MonthlyClosingOverviewRow[]): OverviewStats {
   const closedCount = rows.filter((row) => row.status === 'closed').length;
   const totalCount = rows.length;
@@ -250,8 +274,9 @@ export default async function MonatsabschlussPage({ searchParams }: { searchPara
 
   const resolved = searchParams ? await searchParams : undefined;
   const { year, month } = getSelectedYearMonth(resolved);
+  const employeeStatus = getSelectedEmployeeStatus(resolved);
   const employees = await getAdminEmployeeList(tenantId);
-  const rows = await buildOverviewRows(employees, year, month);
+  const rows = filterOverviewRows(await buildOverviewRows(employees, year, month), employeeStatus);
   const stats = computeStats(rows);
 
   const yearOptions = await listClosingYears();
@@ -268,6 +293,7 @@ export default async function MonatsabschlussPage({ searchParams }: { searchPara
       stats={stats}
       selectedYear={year}
       selectedMonth={month}
+      selectedEmployeeStatus={employeeStatus}
       yearOptions={yearOptions}
       monthOptions={monthOptions}
       closeEmployeeAction={closeEmployeeMonthAction}
